@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -74,11 +74,18 @@ void clear_buffer(void) {
     }
 }
 
-void set_pixel(int x, int y, uint8_t value) {
-    if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-        buffer[x][y] = value;
-    }
+void set_pixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
+	r = r ? 1 : 0;
+    g = g ? 1 : 0;
+    b = b ? 1 : 0;
+    buffer[x][y] = (r << 2) | (g << 1) | b;
 }
+void get_rgb(uint8_t pixel, uint8_t *r, uint8_t *g, uint8_t *b) {
+	*r = (pixel >> 2) & 0x01;
+	*g = (pixel >> 1) & 0x01;
+	*b = (pixel     ) & 0x01;
+}
+
 
 
 void render_buffer() {
@@ -89,12 +96,17 @@ void render_buffer() {
 					uint8_t data_area_1 = buffer[segment*4+window][row+block*8];
 					uint8_t data_area_2 = buffer[segment*4+window][row+block*8 + 16];
 
-					R1(data_area_1);
-					G1(data_area_1);
-					B1(data_area_1);
-					R2(data_area_2);
-					G2(data_area_2);
-					B2(data_area_2);
+					uint8_t r, g, b;
+
+					get_rgb(data_area_1, &r, &g, &b);
+					R1(r);
+					G1(g);
+					B1(b);
+
+					get_rgb(data_area_2, &r, &g, &b);
+					R2(r);
+					G2(g);
+					B2(b);
 
 					CLK_H;
 					CLK_L;
@@ -137,7 +149,49 @@ uint32_t get_delta_time() {
     return delta_time;
 }
 
+void generate_rainbow() {
+    for (int y = 0; y < HEIGHT; ++y) {
+        for (int x = 0; x < WIDTH; ++x) {
+            uint8_t color = (x * 6) / WIDTH; // Create a value that cycles through 0 to 5
+            uint8_t r = 0, g = 0, b = 0;
 
+            switch (color) {
+                case 0: // Red
+                    r = 1;
+                    g = 0;
+                    b = 0;
+                    break;
+                case 1: // Yellow
+                    r = 1;
+                    g = 1;
+                    b = 0;
+                    break;
+                case 2: // Green
+                    r = 0;
+                    g = 1;
+                    b = 0;
+                    break;
+                case 3: // Cyan
+                    r = 0;
+                    g = 1;
+                    b = 1;
+                    break;
+                case 4: // Blue
+                    r = 0;
+                    g = 0;
+                    b = 1;
+                    break;
+                case 5: // Magenta
+                    r = 1;
+                    g = 0;
+                    b = 1;
+                    break;
+            }
+
+            set_pixel(x, y, r, g, b);
+        }
+    }
+}
 void on_ready() {
 	clear_buffer();
 	/*
@@ -152,15 +206,17 @@ void on_ready() {
 		}
 	}
 	*/
+	generate_rainbow();
 	int xoffset = 0;
 	for (int y = 0; y < 32; ++y) {
-		set_pixel(xoffset++, y, 1);
-		set_pixel(xoffset++, y, 1);
+		set_pixel(xoffset++, y, 1,1,1);
+		set_pixel(xoffset++, y, 1,1,1);
 	}
+	//memset(buffer, 7, sizeof(buffer));
 }
 
 void on_update() {
-	scroll_buffer_down();
+	//scroll_buffer_down();
 }
 
 
@@ -170,19 +226,26 @@ void on_update() {
   * @brief  The application entry point.
   * @retval int
   */
-int main(void) {
+int main(void)
+{
+
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
+
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+
   /* USER CODE BEGIN Init */
   /* USER CODE END Init */
+
   /* Configure the system clock */
   SystemClock_Config();
+
   /* USER CODE BEGIN SysInit */
   /* USER CODE END SysInit */
+
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_SPI1_Init();
@@ -198,6 +261,7 @@ int main(void) {
 	//HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, GPIO_PIN_SET);
 
   /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
@@ -386,7 +450,7 @@ static void MX_TIM3_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 20;
+  sConfigOC.Pulse = 10;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
