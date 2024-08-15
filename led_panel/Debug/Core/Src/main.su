@@ -1,0 +1,14 @@
+../Core/Src/main.c:69:6:clear_buffer	16	static
+../Core/Src/main.c:77:6:set_pixel	24	static
+../Core/Src/main.c:84:6:render_buffer	32	static
+../Core/Src/main.c:115:6:scroll_buffer_down	88	static
+../Core/Src/main.c:133:10:get_delta_time	16	static
+../Core/Src/main.c:141:6:on_ready	16	static
+../Core/Src/main.c:162:6:on_update	8	static
+../Core/Src/main.c:173:5:main	16	static
+../Core/Src/main.c:227:6:SystemClock_Config	72	static
+../Core/Src/main.c:266:13:MX_SPI1_Init	8	static
+../Core/Src/main.c:304:13:MX_TIM2_Init	32	static
+../Core/Src/main.c:349:13:MX_TIM3_Init	64	static
+../Core/Src/main.c:408:13:MX_GPIO_Init	40	static
+../Core/Src/main.c:485:6:Error_Handler	4	static,ignoring_inline_asm

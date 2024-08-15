@@ -1,0 +1,8 @@
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c:90:19:HAL_RCCEx_PeriphCLKConfig	24
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c:229:6:HAL_RCCEx_GetPeriphCLKConfig	2
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c:266:10:HAL_RCCEx_GetPeriphCLKFreq	12
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c:358:6:HAL_RCCEx_EnableLSECSS	1
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c:371:6:HAL_RCCEx_DisableLSECSS	1
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c:385:6:HAL_RCCEx_EnableLSECSS_IT	1
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c:402:6:HAL_RCCEx_LSECSS_IRQHandler	2
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_rcc_ex.c:419:13:HAL_RCCEx_LSECSS_Callback	1

@@ -1,0 +1,8 @@
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c:113:30:HAL_FLASHEx_EnableRunPowerDown	1
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c:126:30:HAL_FLASHEx_DisableRunPowerDown	1
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c:302:30:HAL_FLASHEx_HalfPageProgram	3
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c:394:30:HAL_FLASHEx_GetError	1
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c:426:30:HAL_FLASHEx_DATAEEPROM_EraseDoubleWord	2
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c:486:30:HAL_FLASHEx_DATAEEPROM_ProgramDoubleWord	2
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c:586:37:FLASHRAM_WaitForLastOperation	10
+../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_flash_ramfunc.c:540:37:FLASHRAM_SetErrorCode	6
