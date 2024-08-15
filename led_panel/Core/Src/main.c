@@ -62,6 +62,12 @@ static void MX_TIM3_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+// make gpio_output control c6 (output enable pin)
+#define OE_TIMER_DISABLE GPIOC->CRL &= 0xF3FFFFFF
+// make the timer3 control c6 (output enable pin)
+#define OE_TIMER_ENABLE  GPIOC->CRL |= 0x08000000
+
+
 #define WIDTH 64
 #define HEIGHT 32
 uint8_t buffer[WIDTH][HEIGHT];
@@ -85,7 +91,6 @@ void get_rgb(uint8_t pixel, uint8_t *r, uint8_t *g, uint8_t *b) {
 	*g = (pixel >> 1) & 0x01;
 	*b = (pixel     ) & 0x01;
 }
-
 
 
 void render_buffer() {
@@ -114,13 +119,11 @@ void render_buffer() {
 			}
 		}
 
-		// make gpio_output control c6 (output enable pin)
-		GPIOC->CRL &= 0xF3FFFFFF;
+		OE_TIMER_DISABLE;
 		LAT_H;
 		LAT_L;
 		ROW(row);
-		// make the timer3 control c6 (output enable pin)
-		GPIOC->CRL |= 0x08000000;
+		OE_TIMER_ENABLE;
 	}
 }
 
@@ -140,6 +143,23 @@ void scroll_buffer_down() {
         buffer[x][0] = last_row[x];
     }
 }
+void scroll_buffer_left() {
+	uint8_t first_column[HEIGHT];
+	for (int y = 0; y < HEIGHT; ++y) {
+		first_column[y] = buffer[0][y];
+	}
+
+	for (int x = 0; x < WIDTH - 1; ++x) {
+		for (int y = 0; y < HEIGHT; ++y) {
+			buffer[x][y] = buffer[x + 1][y];
+		}
+	}
+
+	for (int y = 0; y < HEIGHT; ++y) {
+		buffer[WIDTH - 1][y] = first_column[y];
+	}
+}
+
 
 uint32_t last_tick_time = 0;
 uint32_t get_delta_time() {
@@ -216,7 +236,8 @@ void on_ready() {
 }
 
 void on_update() {
-	//scroll_buffer_down();
+	scroll_buffer_down();
+	scroll_buffer_left();
 }
 
 
@@ -274,8 +295,8 @@ int main(void)
 			accum = 0;
 			on_update();
 		}
-
 		render_buffer();
+
 
     /* USER CODE END WHILE */
 
