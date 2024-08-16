@@ -1,0 +1,6 @@
+../Core/Src/renderer.c:14:6:clear_buffer	16	static
+../Core/Src/renderer.c:22:6:set_pixel	24	static
+../Core/Src/renderer.c:28:6:set_pixel_w	32	static
+../Core/Src/renderer.c:32:6:get_rgb	24	static
+../Core/Src/renderer.c:39:6:render_row	32	static
+../Core/Src/renderer.c:72:6:render_buffer	8	static

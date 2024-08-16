@@ -1,0 +1,6 @@
+../Core/Src/renderer.c:14:6:clear_buffer	3
+../Core/Src/renderer.c:22:6:set_pixel	1
+../Core/Src/renderer.c:28:6:set_pixel_w	1
+../Core/Src/renderer.c:32:6:get_rgb	1
+../Core/Src/renderer.c:39:6:render_row	14
+../Core/Src/renderer.c:72:6:render_buffer	2

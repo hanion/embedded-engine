@@ -56,76 +56,11 @@ static void MX_SPI1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-// make gpio_output control c6 (output enable pin)
-#define OE_TIMER_DISABLE GPIOC->CRL &= 0xF3FFFFFF
-// make the timer3 control c6 (output enable pin)
-#define OE_TIMER_ENABLE  GPIOC->CRL |= 0x08000000
-
-
-#define WIDTH 64
-#define HEIGHT 32
-uint8_t buffer[WIDTH][HEIGHT];
-
-void clear_buffer(void) {
-    for (int x = 0; x < WIDTH; x++) {
-        for (int y = 0; y < HEIGHT; y++) {
-            buffer[x][y] = 0;
-        }
-    }
-}
-
-void set_pixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
-	r = r ? 1 : 0;
-    g = g ? 1 : 0;
-    b = b ? 1 : 0;
-    buffer[x][y] = (r << 2) | (g << 1) | b;
-}
-void get_rgb(uint8_t pixel, uint8_t *r, uint8_t *g, uint8_t *b) {
-	*r = (pixel >> 2) & 0x01;
-	*g = (pixel >> 1) & 0x01;
-	*b = (pixel     ) & 0x01;
-}
-
-
-void render_buffer() {
-	for (int row = 0; row < 8; ++row) {
-		for (int segment = 0; segment < 16; ++segment) {
-			for (int block = 1; block >= 0; --block) {
-				for (int window = 0; window < 4; ++window) {
-					uint8_t data_area_1 = buffer[segment*4+window][row+block*8];
-					uint8_t data_area_2 = buffer[segment*4+window][row+block*8 + 16];
-
-					uint8_t r, g, b;
-
-					get_rgb(data_area_1, &r, &g, &b);
-					R1(r);
-					G1(g);
-					B1(b);
-
-					get_rgb(data_area_2, &r, &g, &b);
-					R2(r);
-					G2(g);
-					B2(b);
-
-					CLK_H;
-					CLK_L;
-				}
-			}
-		}
-
-		OE_TIMER_DISABLE;
-		LAT_H;
-		LAT_L;
-		ROW(row);
-		OE_TIMER_ENABLE;
-	}
-}
 
 void scroll_buffer_down() {
     uint8_t last_row[WIDTH];
@@ -158,15 +93,6 @@ void scroll_buffer_left() {
 	for (int y = 0; y < HEIGHT; ++y) {
 		buffer[WIDTH - 1][y] = first_column[y];
 	}
-}
-
-
-uint32_t last_tick_time = 0;
-uint32_t get_delta_time() {
-    uint32_t current_time = HAL_GetTick();
-    uint32_t delta_time = current_time - last_tick_time;
-    last_tick_time = current_time;
-    return delta_time;
 }
 
 void generate_rainbow() {
@@ -212,20 +138,11 @@ void generate_rainbow() {
         }
     }
 }
+
+
+
 void on_ready() {
 	clear_buffer();
-	/*
-	for (int x = 0; x < WIDTH; x++) {
-		for (int y = 0; y < HEIGHT; y++) {
-			//set_pixel(x, y, (x + y) % 2);
-			if (y%2==0) {
-				set_pixel(x, y, (x%2==0));
-			} else {
-				set_pixel(x, y, (x%2==1));
-			}
-		}
-	}
-	*/
 	generate_rainbow();
 	int xoffset = 0;
 	for (int y = 0; y < 32; ++y) {
@@ -235,11 +152,30 @@ void on_ready() {
 	//memset(buffer, 7, sizeof(buffer));
 }
 
+
 void on_update() {
 	scroll_buffer_down();
-	scroll_buffer_left();
 }
 
+void on_button_pressed() {
+	scroll_buffer_left();
+}
+void on_button_held() {
+	scroll_buffer_left();
+}
+void on_button_released() {
+
+}
+
+
+
+uint32_t last_tick_time = 0;
+uint32_t get_delta_time() {
+    uint32_t current_time = HAL_GetTick();
+    uint32_t delta_time = current_time - last_tick_time;
+    last_tick_time = current_time;
+    return delta_time;
+}
 
 /* USER CODE END 0 */
 
@@ -290,13 +226,13 @@ int main(void)
 
 	int accum = 0;
 	while (1) {
+
 		accum += get_delta_time();
 		if (accum >= 50) {
 			accum = 0;
+			on_event();
 			on_update();
 		}
-		render_buffer();
-
 
     /* USER CODE END WHILE */
 
@@ -349,8 +285,8 @@ void SystemClock_Config(void)
   * @retval None
   */
 static void MX_SPI1_Init(void)
-{
 
+{
   /* USER CODE BEGIN SPI1_Init 0 */
 
   /* USER CODE END SPI1_Init 0 */
@@ -395,14 +331,15 @@ static void MX_TIM2_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM2_Init 1 */
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 799;
+  htim2.Init.Prescaler = 63;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 9;
+  htim2.Init.Period = 1000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -414,15 +351,28 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
+  HAL_TIM_MspPostInit(&htim2);
 
 }
 
@@ -471,7 +421,7 @@ static void MX_TIM3_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 10;
+  sConfigOC.Pulse = 5;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
@@ -547,6 +497,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : BUTTON_Pin */
+  GPIO_InitStruct.Pin = BUTTON_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : PD2 */
   GPIO_InitStruct.Pin = GPIO_PIN_2;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -555,6 +511,12 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  GPIO_InitStruct.Pin = BUTTON_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
+
 
 /* USER CODE END MX_GPIO_Init_2 */
 }
