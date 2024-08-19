@@ -1,0 +1,17 @@
+../Core/Src/game0.c:67:6:respawn_obstacle	7
+../Core/Src/game0.c:102:6:init_obstacles	2
+../Core/Src/game0.c:113:6:move_obstacles	7
+../Core/Src/game0.c:142:6:move_dino	5
+../Core/Src/game0.c:165:6:draw_ground	1
+../Core/Src/game0.c:168:6:draw_dino	2
+../Core/Src/game0.c:176:6:draw_obstacles	7
+../Core/Src/game0.c:191:6:draw_score	1
+../Core/Src/game0.c:205:6:check_collision	5
+../Core/Src/game0.c:213:6:dino_die	1
+../Core/Src/game0.c:221:6:dino_respawn	1
+../Core/Src/game0.c:230:6:dino_jump	1
+../Core/Src/game0.c:238:6:on_ready	1
+../Core/Src/game0.c:243:6:on_update	5
+../Core/Src/game0.c:273:6:on_button_pressed	3
+../Core/Src/game0.c:278:6:on_button_held	3
+../Core/Src/game0.c:283:6:on_button_released	1

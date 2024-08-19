@@ -6,8 +6,8 @@
  */
 
 
+#include "base.h"
 #include "event.h"
-#include "main.h"
 
 
 static uint8_t is_button_held = 0;

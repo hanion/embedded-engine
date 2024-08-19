@@ -31,6 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "base.h"
 #include "renderer.h"
 #include "event.h"
 /* USER CODE END Includes */
@@ -57,22 +58,17 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
+extern double DeltaTime;
+
+void buzzer();
+extern void on_ready();
+extern void on_update();
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define D_PIN_Pin GPIO_PIN_7
-#define D_PIN_GPIO_Port GPIOC
-#define C_PIN_Pin GPIO_PIN_8
-#define C_PIN_GPIO_Port GPIOC
-#define B_PIN_Pin GPIO_PIN_9
-#define B_PIN_GPIO_Port GPIOC
-#define A_PIN_Pin GPIO_PIN_8
-#define A_PIN_GPIO_Port GPIOA
-#define BUTTON_Pin GPIO_PIN_10
-#define BUTTON_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
-
 
 /* USER CODE END Private defines */
 

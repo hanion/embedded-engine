@@ -61,121 +61,24 @@ static void MX_TIM3_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-
-void scroll_buffer_down() {
-    uint8_t last_row[WIDTH];
-    for (int x = 0; x < WIDTH; ++x) {
-        last_row[x] = buffer[x][HEIGHT - 1];
-    }
-
-    for (int y = HEIGHT - 1; y > 0; --y) {
-        for (int x = 0; x < WIDTH; ++x) {
-            buffer[x][y] = buffer[x][y - 1];
-        }
-    }
-
-    for (int x = 0; x < WIDTH; ++x) {
-        buffer[x][0] = last_row[x];
-    }
-}
-void scroll_buffer_left() {
-	uint8_t first_column[HEIGHT];
-	for (int y = 0; y < HEIGHT; ++y) {
-		first_column[y] = buffer[0][y];
-	}
-
-	for (int x = 0; x < WIDTH - 1; ++x) {
-		for (int y = 0; y < HEIGHT; ++y) {
-			buffer[x][y] = buffer[x + 1][y];
-		}
-	}
-
-	for (int y = 0; y < HEIGHT; ++y) {
-		buffer[WIDTH - 1][y] = first_column[y];
-	}
-}
-
-void generate_rainbow() {
-    for (int y = 0; y < HEIGHT; ++y) {
-        for (int x = 0; x < WIDTH; ++x) {
-            uint8_t color = (x * 6) / WIDTH; // Create a value that cycles through 0 to 5
-            uint8_t r = 0, g = 0, b = 0;
-
-            switch (color) {
-                case 0: // Red
-                    r = 1;
-                    g = 0;
-                    b = 0;
-                    break;
-                case 1: // Yellow
-                    r = 1;
-                    g = 1;
-                    b = 0;
-                    break;
-                case 2: // Green
-                    r = 0;
-                    g = 1;
-                    b = 0;
-                    break;
-                case 3: // Cyan
-                    r = 0;
-                    g = 1;
-                    b = 1;
-                    break;
-                case 4: // Blue
-                    r = 0;
-                    g = 0;
-                    b = 1;
-                    break;
-                case 5: // Magenta
-                    r = 1;
-                    g = 0;
-                    b = 1;
-                    break;
-            }
-
-            set_pixel(x, y, r, g, b);
-        }
-    }
-}
-
-
-
-void on_ready() {
-	clear_buffer();
-	generate_rainbow();
-	int xoffset = 0;
-	for (int y = 0; y < 32; ++y) {
-		set_pixel(xoffset++, y, 1,1,1);
-		set_pixel(xoffset++, y, 1,1,1);
-	}
-	//memset(buffer, 7, sizeof(buffer));
-}
-
-
-void on_update() {
-	scroll_buffer_down();
-}
-
-void on_button_pressed() {
-	scroll_buffer_left();
-}
-void on_button_held() {
-	scroll_buffer_left();
-}
-void on_button_released() {
-
-}
-
-
+double DeltaTime = 0;
 
 uint32_t last_tick_time = 0;
-uint32_t get_delta_time() {
+uint32_t get_tick_delta_time() {
     uint32_t current_time = HAL_GetTick();
-    uint32_t delta_time = current_time - last_tick_time;
+    uint32_t tick_delta_time = current_time - last_tick_time;
     last_tick_time = current_time;
-    return delta_time;
+    return tick_delta_time;
 }
+
+bool buzzer_request = false;
+uint32_t buzzer_toggle_request_time = 0;
+void buzzer() {
+	buzzer_request = true;
+	buzzer_toggle_request_time = HAL_GetTick();
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+}
+
 
 /* USER CODE END 0 */
 
@@ -224,14 +127,26 @@ int main(void)
 
 	on_ready();
 
-	int accum = 0;
+#define FIXED_DELTA_TIME 15 /* frame time milliseconds */
+
+	int accumulator = 0;
 	while (1) {
 
-		accum += get_delta_time();
-		if (accum >= 50) {
-			accum = 0;
+		accumulator += get_tick_delta_time();
+		if (accumulator >= FIXED_DELTA_TIME) {
+			accumulator -= FIXED_DELTA_TIME;
+			DeltaTime = FIXED_DELTA_TIME / 1000.0;
 			on_event();
 			on_update();
+			is_back_buffer_new = true;
+		}
+
+
+		if (buzzer_request) {
+			if (HAL_GetTick() - buzzer_toggle_request_time > 20) {
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
+				buzzer_request = false;
+			}
 		}
 
     /* USER CODE END WHILE */
@@ -285,8 +200,8 @@ void SystemClock_Config(void)
   * @retval None
   */
 static void MX_SPI1_Init(void)
-
 {
+
   /* USER CODE BEGIN SPI1_Init 0 */
 
   /* USER CODE END SPI1_Init 0 */
@@ -457,11 +372,11 @@ static void MX_GPIO_Init(void)
                           |GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, D_PIN_Pin|C_PIN_Pin|B_PIN_Pin|GPIO_PIN_11
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_11
                           |GPIO_PIN_12, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, A_PIN_Pin|GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_RESET);
@@ -481,27 +396,27 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : D_PIN_Pin C_PIN_Pin B_PIN_Pin PC11
+  /*Configure GPIO pins : PC7 PC8 PC9 PC11
                            PC12 */
-  GPIO_InitStruct.Pin = D_PIN_Pin|C_PIN_Pin|B_PIN_Pin|GPIO_PIN_11
+  GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_11
                           |GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : A_PIN_Pin PA15 */
-  GPIO_InitStruct.Pin = A_PIN_Pin|GPIO_PIN_15;
+  /*Configure GPIO pins : PA8 PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : BUTTON_Pin */
-  GPIO_InitStruct.Pin = BUTTON_Pin;
+  /*Configure GPIO pin : PC10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PD2 */
   GPIO_InitStruct.Pin = GPIO_PIN_2;

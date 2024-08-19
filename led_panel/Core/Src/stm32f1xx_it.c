@@ -205,7 +205,8 @@ void SysTick_Handler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-	// todo: disable tim2 at the start of this func, reenable at the end
+	// todo: disable tim2 at the start of this function, re enable at the end
+	// todo make something like OE_TIMER_DISABLE macro
 	render_buffer();
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
