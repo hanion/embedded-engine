@@ -1,4 +1,4 @@
-Core/Src/game0.o: ../Core/Src/game0.c ../Core/Inc/main.h \
+Core/Src/game0.o: ../Core/Src/game0.c ../Core/Inc/base.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Inc/stm32f1xx_hal_conf.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -24,8 +24,9 @@ Core/Src/game0.o: ../Core/Src/game0.c ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- ../Core/Inc/base.h ../Core/Inc/renderer.h ../Core/Inc/event.h
-../Core/Inc/main.h:
+ ../Core/Inc/main.h ../Core/Inc/base.h ../Core/Inc/renderer.h \
+ ../Core/Inc/event.h
+../Core/Inc/base.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h:
@@ -51,6 +52,7 @@ Core/Src/game0.o: ../Core/Src/game0.c ../Core/Inc/main.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
+../Core/Inc/main.h:
 ../Core/Inc/base.h:
 ../Core/Inc/renderer.h:
 ../Core/Inc/event.h:

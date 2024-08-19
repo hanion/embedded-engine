@@ -4,10 +4,13 @@
  *  Created on: Aug 16, 2024
  *      Author: han
  */
-
+#include "base.h"
 #include "main.h"
 #include <stdlib.h>
 #include <time.h>
+
+#if dino_game
+
 
 #define GROUND_Y 26
 #define GRAVITY 0.4
@@ -279,3 +282,12 @@ void on_button_held() {
 }
 void on_button_released() {
 }
+
+#endif
+
+
+
+
+
+
+

@@ -127,6 +127,8 @@
 #define HEIGHT 32
 
 
+#define dino_game 1
+#define display_string 0
 
 
 #endif /* INC_BASE_H_ */

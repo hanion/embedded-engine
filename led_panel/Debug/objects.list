@@ -1,3 +1,4 @@
+"./Core/Src/display_string.o"
 "./Core/Src/event.o"
 "./Core/Src/game0.o"
 "./Core/Src/main.o"
