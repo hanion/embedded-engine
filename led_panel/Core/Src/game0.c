@@ -267,9 +267,6 @@ void on_update() {
 
 
 
-
-
-
 void on_button_pressed() {
 	if (!dino.is_dead && !dino.is_jumping) {
 		dino_jump();
@@ -277,7 +274,7 @@ void on_button_pressed() {
 }
 void on_button_held() {
 	if (!dino.is_dead && dino.is_jumping) {
-		dino.jump_velocity -= 80 * DeltaTime;
+		dino.jump_velocity -= 60 * DeltaTime;
 	}
 }
 void on_button_released() {

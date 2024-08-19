@@ -12,6 +12,6 @@
 ../Core/Src/game0.c:230:6:dino_jump	1
 ../Core/Src/game0.c:238:6:on_ready	1
 ../Core/Src/game0.c:243:6:on_update	5
-../Core/Src/game0.c:273:6:on_button_pressed	3
-../Core/Src/game0.c:278:6:on_button_held	3
-../Core/Src/game0.c:283:6:on_button_released	1
+../Core/Src/game0.c:270:6:on_button_pressed	3
+../Core/Src/game0.c:275:6:on_button_held	3
+../Core/Src/game0.c:280:6:on_button_released	1
