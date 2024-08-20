@@ -24,10 +24,10 @@ typedef struct {
 
 
 Message msg0 = {
-		"LLLL The quick brown fox jumps over the lazy dog. LLLLL", {0,1,0,8}, true, -1
+		"LLLL The quick brown fox jumps over the lazy dog. LLLLL", {0,0,0,8}, true, -1
 };
 Message msg1 = {
-		"LLL", {0,16,0,8}, false, 1
+		"LLL", {0,16,0,8}, false, -1
 };
 
 #define MSG_COUNT 2

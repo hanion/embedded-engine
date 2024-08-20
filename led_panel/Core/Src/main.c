@@ -138,6 +138,9 @@ int main(void)
 
 		accumulator += delta;
 		if (accumulator >= UPDATE_INTERVAL_MS) {
+			if (is_back_buffer_new){
+				continue;
+			}
 			DeltaTime = accumulator / 1000.0;
 			on_event();
 			on_update();

@@ -112,10 +112,6 @@ void render_buffer() {
 		}
 	}
 
-//	if (!is_back_buffer_new && current_row == 0) {
-//		//return;
-//	}
-
 
 	render_row();
 
