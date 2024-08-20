@@ -1,0 +1,7 @@
+../Core/Src/display_string.c:37:6:scroll_msg	4
+../Core/Src/display_string.c:51:6:on_ready	2
+../Core/Src/display_string.c:58:6:on_update	2
+../Core/Src/display_string.c:65:6:create_performance_impact	4
+../Core/Src/display_string.c:84:6:on_button_pressed	1
+../Core/Src/display_string.c:88:6:on_button_held	1
+../Core/Src/display_string.c:91:6:on_button_released	1

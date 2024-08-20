@@ -126,9 +126,10 @@
 #define WIDTH 64
 #define HEIGHT 32
 
+#define TEARING_FIX 1
 
-#define dino_game 1
-#define display_string 0
+#define dino_game 0
+#define display_string 1
 
 
 #endif /* INC_BASE_H_ */

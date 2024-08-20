@@ -1,0 +1,7 @@
+../Core/Src/display_string.c:37:6:scroll_msg	16	static
+../Core/Src/display_string.c:51:6:on_ready	24	static
+../Core/Src/display_string.c:58:6:on_update	16	static
+../Core/Src/display_string.c:65:6:create_performance_impact	40	static
+../Core/Src/display_string.c:84:6:on_button_pressed	8	static
+../Core/Src/display_string.c:88:6:on_button_held	4	static
+../Core/Src/display_string.c:91:6:on_button_released	4	static

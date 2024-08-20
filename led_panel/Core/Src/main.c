@@ -125,21 +125,40 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+	clear_back_buffer();
 	on_ready();
 
-#define FIXED_DELTA_TIME 15 /* frame time milliseconds */
+#define UPDATE_INTERVAL_MS 10
 
-	int accumulator = 0;
+	uint32_t debug_var = 0;
+
+	uint32_t accumulator = 0;
 	while (1) {
+		uint32_t delta = get_tick_delta_time();
 
-		accumulator += get_tick_delta_time();
-		if (accumulator >= FIXED_DELTA_TIME) {
-			accumulator -= FIXED_DELTA_TIME;
-			DeltaTime = FIXED_DELTA_TIME / 1000.0;
+		accumulator += delta;
+		if (accumulator >= UPDATE_INTERVAL_MS) {
+			DeltaTime = accumulator / 1000.0;
 			on_event();
 			on_update();
+
+			draw_number(accumulator, 0, HEIGHT-7, false);
+			accumulator -= UPDATE_INTERVAL_MS;
+			//accumulator = 0;
+
+			draw_number(debug_var, WIDTH-1-calculate_number_width(debug_var, false), HEIGHT-7, false);
 			is_back_buffer_new = true;
 		}
+
+//		render_accumulator += delta;
+//		if (render_accumulator >= RENDER_INTERVAL_MS) {
+//			render_accumulator -= RENDER_INTERVAL_MS;
+//			for (uint8_t row = 0; row < 8; ++row) {
+//				render_buffer();
+//				// each row is displayed for 1 ms
+//				HAL_Delay(1);
+//			}
+//		}
 
 
 		if (buzzer_request) {
@@ -148,6 +167,14 @@ int main(void)
 				buzzer_request = false;
 			}
 		}
+
+		uint32_t current_time = HAL_GetTick();
+		debug_var = current_time - last_tick_time;
+
+//		// this should also do the same
+//		if (debug_var < UPDATE_INTERVAL_MS) {
+//		//	HAL_Delay(UPDATE_INTERVAL_MS-debug_var-2);
+//		}
 
     /* USER CODE END WHILE */
 
@@ -252,9 +279,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 63;
+  htim2.Init.Prescaler = 6399;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 1000;
+  htim2.Init.Period = 5;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)

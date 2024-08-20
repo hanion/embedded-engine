@@ -14,6 +14,7 @@ uint8_t buffer2[WIDTH][HEIGHT];
 uint8_t (*front_buffer)[WIDTH][HEIGHT] = &buffer1;
 uint8_t (*back_buffer)[WIDTH][HEIGHT] = &buffer2;
 bool is_back_buffer_new = false;
+bool should_render = false;
 
 void swap_buffers() {
     uint8_t (*temp)[WIDTH][HEIGHT] = front_buffer;
@@ -49,14 +50,26 @@ void get_rgb(uint8_t pixel, uint8_t *r, uint8_t *g, uint8_t *b) {
 
 uint8_t current_row = 0;
 void render_row() {
-	uint8_t row = current_row;
-	for (int segment = 0; segment < 16; ++segment) {
-		for (int block = 1; block >= 0; --block) {
-			for (int window = 0; window < 4; ++window) {
-				uint8_t data_area_1 = (*front_buffer)[segment*4+window][row+block*8];
-				uint8_t data_area_2 = (*front_buffer)[segment*4+window][row+block*8 + 16];
+	uint8_t r, g, b;
+	for (uint8_t segment = 0; segment < 16; ++segment) {
+		for (int8_t block = 1; block >= 0; --block) {
+			for (uint8_t window = 0; window < 4; ++window) {
+#if TEARING_FIX
+				uint8_t x = segment*4 + window -1*block;
+#else
+				uint8_t x = segment*4 + window;
+#endif
+				uint8_t y = current_row + block*8;
+				uint8_t data_area_1 = (*front_buffer)[x][y];
+				uint8_t data_area_2 = (*front_buffer)[x][y + 16];
 
-				uint8_t r, g, b;
+#if TEARING_FIX
+				if (x >= WIDTH) {
+					data_area_1 = 0;
+					data_area_2 = 0;
+				}
+#endif
+
 
 				get_rgb(data_area_1, &r, &g, &b);
 				R1(r);
@@ -77,14 +90,35 @@ void render_row() {
 	OE_TIMER_DISABLE;
 	LAT_H;
 	LAT_L;
-	ROW(row);
+	ROW(current_row);
 	OE_TIMER_ENABLE;
 }
 
 
+// this is calculating the time between each display refresh
+// (time between rendering of 0th rows)
+// it does not account for the time it takes to render all rows
+// so it should be minimum time of 8 row rendering otherwise this is useless
+#define RENDER_INTERVAL_MS 10
+uint32_t last_render_time = 0;
 
 void render_buffer() {
+	if (current_row == 0) {
+		uint32_t tick = HAL_GetTick();
+		if (tick - last_render_time < RENDER_INTERVAL_MS) {
+			return;
+		} else {
+			last_render_time = tick;
+		}
+	}
+
+//	if (!is_back_buffer_new && current_row == 0) {
+//		//return;
+//	}
+
+
 	render_row();
+
 	if (++current_row == 8) {
 		current_row = 0;
 		if (is_back_buffer_new) {
@@ -327,7 +361,7 @@ void draw_char(char c, int x, int y, bool bold) {
 void draw_text(const char *text, int x, int y, bool bold) {
 	while (*text) {
 		draw_char(*text++, x, y, bold);
-		x += bold ? FONT_WIDTH * 2 + 1 : FONT_WIDTH + 1;
+		x += FONT_WIDTH + 1 + FONT_WIDTH*bold;
 	}
 }
 
@@ -348,7 +382,7 @@ const int calculate_number_width(int number, bool bold) {
 	int width = 0;
 
 	if (number == 0) {
-		width += digit_width;
+		width += digit_width + 1;
 	} else {
 		while (number > 0) {
 			width += digit_width + 1 + digit_width*bold;

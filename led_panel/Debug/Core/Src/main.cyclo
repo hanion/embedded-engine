@@ -1,9 +1,9 @@
 ../Core/Src/main.c:67:10:get_tick_delta_time	1
 ../Core/Src/main.c:76:6:buzzer	1
 ../Core/Src/main.c:89:5:main	4
-../Core/Src/main.c:163:6:SystemClock_Config	3
-../Core/Src/main.c:202:13:MX_SPI1_Init	2
-../Core/Src/main.c:240:13:MX_TIM2_Init	6
-../Core/Src/main.c:299:13:MX_TIM3_Init	6
-../Core/Src/main.c:358:13:MX_GPIO_Init	1
-../Core/Src/main.c:447:6:Error_Handler	1
+../Core/Src/main.c:190:6:SystemClock_Config	3
+../Core/Src/main.c:229:13:MX_SPI1_Init	2
+../Core/Src/main.c:267:13:MX_TIM2_Init	6
+../Core/Src/main.c:326:13:MX_TIM3_Init	6
+../Core/Src/main.c:385:13:MX_GPIO_Init	1
+../Core/Src/main.c:474:6:Error_Handler	1
