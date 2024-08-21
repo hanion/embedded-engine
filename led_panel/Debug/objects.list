@@ -1,3 +1,4 @@
+"./Core/Src/cube3d.o"
 "./Core/Src/display_string.o"
 "./Core/Src/display_test.o"
 "./Core/Src/event.o"

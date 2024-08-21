@@ -57,7 +57,7 @@ void copy_to_back_buffer() {
 }
 
 
-void initialize_r_pentomino(uint8_t x_offset, uint8_t y_offset) {
+void create_r_pentomino(uint8_t x_offset, uint8_t y_offset) {
     uint8_t r_pentomino[3][3] = {
         {0, 1, 1},
         {1, 1, 0},
@@ -71,7 +71,7 @@ void initialize_r_pentomino(uint8_t x_offset, uint8_t y_offset) {
     }
 }
 
-void initialize_glider(uint8_t start_x, uint8_t start_y) {
+void create_glider(uint8_t start_x, uint8_t start_y) {
 	if (start_x < WIDTH-2 && start_y < HEIGHT-2) {
 		grid[start_x+1][start_y  ] = 1;
 		grid[start_x+2][start_y+1] = 1;
@@ -83,14 +83,17 @@ void initialize_glider(uint8_t start_x, uint8_t start_y) {
 
 void on_ready() {
 	memset(grid, 0, sizeof(grid));
-	initialize_glider(35,20);
-	initialize_r_pentomino(32,16);
+	grid[51][22] = 1;
+	grid[52][22] = 1;
+	grid[53][22] = 1;
+	create_glider(35,20);
+	create_r_pentomino(32,16);
 }
 
 bool pause = false;
 
 void on_update() {
-	clear_back_buffer();
+	//clear_back_buffer();
 
 	if (!pause) {
 		advance_rule();
@@ -103,11 +106,6 @@ void on_update() {
 void on_button_pressed() {
 	pause = !pause;
 }
-void on_button_held() {
-}
-void on_button_released() {
-}
-
 #endif
 
 

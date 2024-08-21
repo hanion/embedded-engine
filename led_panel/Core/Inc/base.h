@@ -129,12 +129,13 @@
 #define TEARING_FIX 0
 #define DEBUG_NUMBERS 0
 
+#define display_test 0
+
 #define dino_game 0
 #define display_string 0
 #define rule110 0
-#define game_of_life 1
-#define display_test 0
-
+#define game_of_life 0
+#define cube3d 1
 
 
 #endif /* INC_BASE_H_ */

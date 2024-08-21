@@ -128,7 +128,7 @@ int main(void)
 	clear_back_buffer();
 	on_ready();
 
-#define UPDATE_INTERVAL_MS 10
+#define UPDATE_INTERVAL_MS 40
 
 #if DEBUG_NUMBERS
 	uint32_t debug_var = 0;

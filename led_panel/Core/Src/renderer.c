@@ -126,7 +126,17 @@ void render_buffer() {
 
 // Bresenham's line algorithm
 // (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
-void draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
+void draw_line(int x0, int y0, int x1, int y1) {
+	if (x0 < 0) { x0 = 0; }
+	if (x1 < 0) { x1 = 0; }
+	if (y0 < 0) { y0 = 0; }
+	if (y1 < 0) { y1 = 0; }
+	if (x0 >= WIDTH) { x0 = WIDTH-1; }
+	if (x1 >= WIDTH) { x1 = WIDTH-1; }
+	if (y0 >= HEIGHT) { y0 = HEIGHT-1; }
+	if (y1 >= HEIGHT) { y1 = HEIGHT-1; }
+
+
 	int dx = abs(x1 - x0);
 	int sx = (x0 < x1) ? 1 : -1;
 	int dy = -abs(y1 - y0);

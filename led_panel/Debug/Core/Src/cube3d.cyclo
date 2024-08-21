@@ -1,0 +1,13 @@
+../Core/Src/cube3d.c:54:6:multiply_matrix_matrix	4
+../Core/Src/cube3d.c:64:6:multiply_matrix_vector	1
+../Core/Src/cube3d.c:69:11:get_rotation_matrix_x	1
+../Core/Src/cube3d.c:79:11:get_rotation_matrix_y	1
+../Core/Src/cube3d.c:89:11:get_rotation_matrix_z	1
+../Core/Src/cube3d.c:100:6:project	1
+../Core/Src/cube3d.c:106:7:get_center	5
+../Core/Src/cube3d.c:123:6:apply_transformation	4
+../Core/Src/cube3d.c:168:6:draw_cube	1
+../Core/Src/cube3d.c:176:6:update_rotation_matrix	1
+../Core/Src/cube3d.c:188:6:on_ready	2
+../Core/Src/cube3d.c:203:6:on_update	1
+../Core/Src/cube3d.c:213:6:on_button_pressed	1
