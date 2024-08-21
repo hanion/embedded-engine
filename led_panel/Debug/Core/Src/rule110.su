@@ -1,6 +1,8 @@
-../Core/Src/rule110.c:20:6:on_ready	8	static
-../Core/Src/rule110.c:25:6:on_update	96	static
-../Core/Src/rule110.c:82:6:create_performance_impact	40	static
-../Core/Src/rule110.c:101:6:on_button_pressed	8	static
-../Core/Src/rule110.c:104:6:on_button_held	4	static
-../Core/Src/rule110.c:106:6:on_button_released	4	static
+../Core/Src/rule110.c:21:6:advance_rule	96	static
+../Core/Src/rule110.c:54:6:copy_to_back_buffer	24	static
+../Core/Src/rule110.c:67:6:on_ready	8	static
+../Core/Src/rule110.c:73:6:on_update	8	static
+../Core/Src/rule110.c:97:6:create_performance_impact	40	static
+../Core/Src/rule110.c:116:6:on_button_pressed	8	static
+../Core/Src/rule110.c:119:6:on_button_held	4	static
+../Core/Src/rule110.c:121:6:on_button_released	4	static
