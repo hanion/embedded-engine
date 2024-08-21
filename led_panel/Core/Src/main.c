@@ -128,7 +128,7 @@ int main(void)
 	clear_back_buffer();
 	on_ready();
 
-#define UPDATE_INTERVAL_MS 10
+#define UPDATE_INTERVAL_MS 40
 
 	uint32_t debug_var = 0;
 
@@ -145,11 +145,13 @@ int main(void)
 			on_event();
 			on_update();
 
+#if DEBUG_NUMBERS
 			draw_number(accumulator, 0, HEIGHT-7, false);
+			draw_number(debug_var, WIDTH-1-calculate_number_width(debug_var, false), HEIGHT-7, false);
+#endif
+
 			accumulator -= UPDATE_INTERVAL_MS;
 			//accumulator = 0;
-
-			draw_number(debug_var, WIDTH-1-calculate_number_width(debug_var, false), HEIGHT-7, false);
 			is_back_buffer_new = true;
 		}
 
@@ -171,8 +173,10 @@ int main(void)
 			}
 		}
 
+#if DEBUG_NUMBERS
 		uint32_t current_time = HAL_GetTick();
 		debug_var = current_time - last_tick_time;
+#endif
 
 //		// this should also do the same
 //		if (debug_var < UPDATE_INTERVAL_MS) {

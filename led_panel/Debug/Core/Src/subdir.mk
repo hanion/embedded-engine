@@ -10,6 +10,7 @@ C_SRCS += \
 ../Core/Src/game0.c \
 ../Core/Src/main.c \
 ../Core/Src/renderer.c \
+../Core/Src/rule110.c \
 ../Core/Src/stm32f1xx_hal_msp.c \
 ../Core/Src/stm32f1xx_it.c \
 ../Core/Src/syscalls.c \
@@ -23,6 +24,7 @@ OBJS += \
 ./Core/Src/game0.o \
 ./Core/Src/main.o \
 ./Core/Src/renderer.o \
+./Core/Src/rule110.o \
 ./Core/Src/stm32f1xx_hal_msp.o \
 ./Core/Src/stm32f1xx_it.o \
 ./Core/Src/syscalls.o \
@@ -36,6 +38,7 @@ C_DEPS += \
 ./Core/Src/game0.d \
 ./Core/Src/main.d \
 ./Core/Src/renderer.d \
+./Core/Src/rule110.d \
 ./Core/Src/stm32f1xx_hal_msp.d \
 ./Core/Src/stm32f1xx_it.d \
 ./Core/Src/syscalls.d \
@@ -51,7 +54,7 @@ Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/display_string.cyclo ./Core/Src/display_string.d ./Core/Src/display_string.o ./Core/Src/display_string.su ./Core/Src/event.cyclo ./Core/Src/event.d ./Core/Src/event.o ./Core/Src/event.su ./Core/Src/game0.cyclo ./Core/Src/game0.d ./Core/Src/game0.o ./Core/Src/game0.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/renderer.cyclo ./Core/Src/renderer.d ./Core/Src/renderer.o ./Core/Src/renderer.su ./Core/Src/stm32f1xx_hal_msp.cyclo ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_it.cyclo ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.cyclo ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su ./Core/Src/testing.cyclo ./Core/Src/testing.d ./Core/Src/testing.o ./Core/Src/testing.su
+	-$(RM) ./Core/Src/display_string.cyclo ./Core/Src/display_string.d ./Core/Src/display_string.o ./Core/Src/display_string.su ./Core/Src/event.cyclo ./Core/Src/event.d ./Core/Src/event.o ./Core/Src/event.su ./Core/Src/game0.cyclo ./Core/Src/game0.d ./Core/Src/game0.o ./Core/Src/game0.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/renderer.cyclo ./Core/Src/renderer.d ./Core/Src/renderer.o ./Core/Src/renderer.su ./Core/Src/rule110.cyclo ./Core/Src/rule110.d ./Core/Src/rule110.o ./Core/Src/rule110.su ./Core/Src/stm32f1xx_hal_msp.cyclo ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_it.cyclo ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.cyclo ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su ./Core/Src/testing.cyclo ./Core/Src/testing.d ./Core/Src/testing.o ./Core/Src/testing.su
 
 .PHONY: clean-Core-2f-Src
 
