@@ -79,6 +79,8 @@ void buzzer() {
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
 }
 
+__WEAK void on_ready() {}
+__WEAK void on_update() {}
 
 /* USER CODE END 0 */
 
@@ -117,8 +119,6 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	OE_H;
-	//HAL_GPIO_WritePin(P5_PWR_GPIO_Port, P5_PWR_Pin, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, GPIO_PIN_SET);
 
   /* USER CODE END 2 */
 
@@ -128,11 +128,14 @@ int main(void)
 	clear_back_buffer();
 	on_ready();
 
-#define UPDATE_INTERVAL_MS 40
+#define UPDATE_INTERVAL_MS 10
 
+#if DEBUG_NUMBERS
 	uint32_t debug_var = 0;
+#endif
 
 	uint32_t accumulator = 0;
+
 	while (1) {
 		uint32_t delta = get_tick_delta_time();
 

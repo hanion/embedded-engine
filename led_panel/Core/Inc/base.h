@@ -131,7 +131,9 @@
 
 #define dino_game 0
 #define display_string 0
-#define rule110 1
+#define rule110 0
+#define game_of_life 1
+#define display_test 0
 
 
 

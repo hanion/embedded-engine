@@ -1,0 +1,9 @@
+../Core/Src/game_of_life.c:23:6:advance_rule	16	static
+../Core/Src/game_of_life.c:52:6:copy_to_back_buffer	24	static
+../Core/Src/game_of_life.c:64:6:initialize_r_pentomino	32	static
+../Core/Src/game_of_life.c:78:6:initialize_glider	16	static
+../Core/Src/game_of_life.c:88:6:on_ready	8	static
+../Core/Src/game_of_life.c:96:6:on_update	8	static
+../Core/Src/game_of_life.c:107:6:on_button_pressed	4	static
+../Core/Src/game_of_life.c:110:6:on_button_held	4	static
+../Core/Src/game_of_life.c:112:6:on_button_released	4	static

@@ -9,6 +9,10 @@
 #include "base.h"
 #include "event.h"
 
+__WEAK void on_button_pressed() {}
+__WEAK void on_button_held() {}
+__WEAK void on_button_released() {}
+
 
 static uint8_t is_button_held = 0;
 

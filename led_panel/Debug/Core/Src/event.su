@@ -1,1 +1,4 @@
-../Core/Src/event.c:15:6:on_event	8	static
+../Core/Src/event.c:12:13:on_button_pressed	4	static
+../Core/Src/event.c:13:13:on_button_held	4	static
+../Core/Src/event.c:14:13:on_button_released	4	static
+../Core/Src/event.c:19:6:on_event	8	static
