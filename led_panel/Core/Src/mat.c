@@ -122,25 +122,18 @@ Mat4 get_view_matrix(float cam_x, float cam_y, float cam_z) {
 
 
 Mat4 calculate_transform_matrix(const Transform *transform) {
-	Mat4 translation_to_origin = get_translation_matrix(-transform->x, -transform->y, -transform->z);
-	Mat4 translation_back = get_translation_matrix(transform->x, transform->y, transform->z);
-
 	Mat4 rotation_x = get_rotation_matrix_x(transform->rot_x);
 	Mat4 rotation_y = get_rotation_matrix_y(transform->rot_y);
 	Mat4 rotation_z = get_rotation_matrix_z(transform->rot_z);
-
-	Mat4 scaling = get_scaling_matrix(transform->scale_x, transform->scale_y, transform->scale_z);
-
-
 	Mat4 rotation_combined = mat4_mul_mat4(&rotation_z, &rotation_y);
 	rotation_combined = mat4_mul_mat4(&rotation_combined, &rotation_x);
 
+	Mat4 scaling = get_scaling_matrix(transform->scale_x, transform->scale_y, transform->scale_z);
+
+	Mat4 translation = get_translation_matrix(transform->x, transform->y, transform->z);
+
 	Mat4 transform_matrix;
-	// translate to origin and rotate
-	transform_matrix = mat4_mul_mat4(&translation_to_origin, &rotation_combined);
-	// scale
-	transform_matrix = mat4_mul_mat4(&transform_matrix, &scaling);
-	// translate back
-	transform_matrix = mat4_mul_mat4(&transform_matrix, &translation_back);
+	transform_matrix = mat4_mul_mat4(&scaling, &rotation_combined);
+	transform_matrix = mat4_mul_mat4(&translation, &transform_matrix);
 	return transform_matrix;
 }

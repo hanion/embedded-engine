@@ -60,19 +60,10 @@ void draw_cube(Cube *cube) {
 	Mat4 transform_matrix = calculate_transform_matrix(&cube->transform);
 	Mat4 transform_proj_matrix = mat4_mul_mat4(&view_projection_matrix, &transform_matrix);
 
-
 	Vec4 transformed[POINT_COUNT];
 	for (int i = 0; i < POINT_COUNT; ++i) {
-		Vec4 point;
-		point.x = cube->p[i].x;
-		point.y = cube->p[i].y;
-		point.z = cube->p[i].z;
-		point.w = 1.0;
+		Vec4 model_space = { cube->p[i].x, cube->p[i].y, cube->p[i].z, 1.0 };
 
-		// model space -> world space
-		Vec4 model_space = mat4_mul_vec4(&transform_matrix, &point);
-
-		// world space -> camera space -> screen space
 		transformed[i] = mat4_mul_vec4_project(&transform_proj_matrix, &model_space);
 
 		// center
@@ -88,8 +79,8 @@ void draw_cube(Cube *cube) {
 }
 
 void on_ready() {
-	perspective_projection = mat4_make_perspective(10.0 * (M_PI / 180.0), 1, 1.0, 100.0);
-	view_matrix = get_view_matrix(0, 0, -20); // camera position
+	perspective_projection = mat4_make_perspective(4.0 * (M_PI / 180.0), 1, 1.0, 100.0);
+	view_matrix = get_view_matrix(0, 0, -15); // camera position
 	view_projection_matrix = mat4_mul_mat4(&perspective_projection, &view_matrix);
 }
 
