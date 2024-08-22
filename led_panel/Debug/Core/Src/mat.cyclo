@@ -9,5 +9,3 @@
 ../Core/Src/mat.c:107:6:get_scaling_matrix	1
 ../Core/Src/mat.c:118:6:get_view_matrix	1
 ../Core/Src/mat.c:124:6:calculate_transform_matrix	1
-../Core/Src/mat.c:150:6:cross_product	1
-../Core/Src/mat.c:158:7:dot_product	1

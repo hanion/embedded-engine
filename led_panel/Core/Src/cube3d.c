@@ -51,10 +51,28 @@ Cube cube0 = {
         {4, 5}, {5, 7}, {7, 6}, {6, 4},
         {0, 4}, {1, 5}, {2, 6}, {3, 7}
     },
-    .transform = { 0,0,0, 0,0,0, 3,3,3 }
+    .transform = { -6,0,0, 0,0,0, 3,3,3 }
 };
 
 
+Cube pyramid0 = {
+    .p = {
+		{-1,  1, -1}, // 0 left  front
+		{ 1,  1, -1}, // 1 right front
+		{-1,  1,  1}, // 2 left  back
+		{ 1,  1,  1}, // 3 right back
+		{ 0, -1,  0}, // 4 top
+		{ 0, -1,  0},
+		{ 0, -1,  0},
+		{ 0, -1,  0},
+	},
+    .edges = {
+        {0, 1}, {0, 2}, {3, 2}, {3, 1},
+        {4, 0}, {4, 1}, {4, 2}, {4, 3},
+        {4, 0}, {4, 1}, {4, 2}, {4, 3}
+    },
+    .transform = { 6,0,0, 0,0,0, 3,3,3 }
+};
 
 void draw_cube(Cube *cube) {
 	Mat4 transform_matrix = calculate_transform_matrix(&cube->transform);
@@ -86,19 +104,25 @@ void on_ready() {
 
 
 float speed = 0.02;
+int level = 2;
 void on_update() {
 	clear_back_buffer();
-	cube0.transform.rot_x += speed;
-	cube0.transform.rot_y += speed;
-	cube0.transform.rot_z += speed;
+	cube0.transform.rot_x += speed * level;
+	cube0.transform.rot_y += speed * level;
+	cube0.transform.rot_z += speed * level;
 	draw_cube(&cube0);
+
+
+	pyramid0.transform.rot_x += speed * level;
+	pyramid0.transform.rot_y += speed * level;
+	pyramid0.transform.rot_z += speed * level;
+	draw_cube(&pyramid0);
 }
 
 
 void on_button_pressed() {
-	speed *= 2.0;
-	if (speed > 0.16) {
-		speed = 0.01;
+	if (++level > 5) {
+		level = 0;
 	}
 }
 
