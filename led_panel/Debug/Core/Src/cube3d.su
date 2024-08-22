@@ -1,13 +1,4 @@
-../Core/Src/cube3d.c:54:6:multiply_matrix_matrix	48	static
-../Core/Src/cube3d.c:64:6:multiply_matrix_vector	32	static
-../Core/Src/cube3d.c:69:11:get_rotation_matrix_x	64	static
-../Core/Src/cube3d.c:79:11:get_rotation_matrix_y	64	static
-../Core/Src/cube3d.c:89:11:get_rotation_matrix_z	64	static
-../Core/Src/cube3d.c:100:6:project	24	static
-../Core/Src/cube3d.c:106:7:get_center	32	static
-../Core/Src/cube3d.c:123:6:apply_transformation	336	static
-../Core/Src/cube3d.c:168:6:draw_cube	16	static
-../Core/Src/cube3d.c:176:6:update_rotation_matrix	168	static
-../Core/Src/cube3d.c:188:6:on_ready	24	static
-../Core/Src/cube3d.c:203:6:on_update	8	static
-../Core/Src/cube3d.c:213:6:on_button_pressed	4	static
+../Core/Src/cube3d.c:63:6:draw_cube	376	static
+../Core/Src/cube3d.c:94:6:on_ready	88	static
+../Core/Src/cube3d.c:102:6:on_update	8	static
+../Core/Src/cube3d.c:111:6:on_button_pressed	8	static

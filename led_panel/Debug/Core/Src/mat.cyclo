@@ -1,0 +1,11 @@
+../Core/Src/mat.c:23:6:mat4_mul_mat4	4
+../Core/Src/mat.c:36:6:mat4_mul_vec4	1
+../Core/Src/mat.c:45:6:mat4_make_perspective	1
+../Core/Src/mat.c:55:6:mat4_mul_vec4_project	2
+../Core/Src/mat.c:69:6:get_translation_matrix	1
+../Core/Src/mat.c:78:6:get_rotation_matrix_x	1
+../Core/Src/mat.c:88:6:get_rotation_matrix_y	1
+../Core/Src/mat.c:98:6:get_rotation_matrix_z	1
+../Core/Src/mat.c:107:6:get_scaling_matrix	1
+../Core/Src/mat.c:118:6:get_view_matrix	1
+../Core/Src/mat.c:124:6:calculate_transform_matrix	1
