@@ -9,6 +9,9 @@
 #define INC_MAT_H_
 
 typedef struct {
+    float x, y, z;
+} Vec3;
+typedef struct {
     float x, y, z, w;
 } Vec4;
 

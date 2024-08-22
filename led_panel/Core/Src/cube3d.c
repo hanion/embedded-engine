@@ -22,16 +22,13 @@ Mat4 view_matrix;
 Mat4 view_projection_matrix;
 
 
+#define POINT_COUNT 8
+#define EDGE_COUNT 12
 
 typedef struct {
-	float x,y,z;
-} Point;
-
-
-typedef struct {
-	Point p[8];
-	int edges[12][2];
-	Transform t;
+	Vec3 p[8];
+	int edges[EDGE_COUNT][2];
+	Transform transform;
 } Cube;
 
 // 0 2
@@ -39,29 +36,28 @@ typedef struct {
 //     4 6
 //     5 7
 Cube cube0 = {
-    {
-	 {-1, -1, -1},
-	 {-1,  1, -1},
-	 { 1, -1, -1},
-	 { 1,  1, -1},
-	 {-1, -1,  1},
-	 {-1,  1,  1},
-	 { 1, -1,  1},
-	 { 1,  1,  1}
-    },
-	{
-	 {0,1},{0,2},{0,4},{1,3},{1,5},{2,3},
-	 {2,6},{3,7},{4,5},{4,6},{5,7},{6,7}
+    .p = {
+		{-1, -1, -1},
+		{-1,  1, -1},
+		{ 1, -1, -1},
+		{ 1,  1, -1},
+		{-1, -1,  1},
+		{-1,  1,  1},
+		{ 1, -1,  1},
+		{ 1,  1,  1}
 	},
-	{ 0,0,0, 0,0,0, 3,3,3 }
+    .edges = {
+        {0, 1}, {1, 3}, {3, 2}, {2, 0},
+        {4, 5}, {5, 7}, {7, 6}, {6, 4},
+        {0, 4}, {1, 5}, {2, 6}, {3, 7}
+    },
+    .transform = { 0,0,0, 0,0,0, 3,3,3 }
 };
-#define POINT_COUNT 8
-#define EDGE_COUNT 12
 
 
 
 void draw_cube(Cube *cube) {
-	Mat4 transform_matrix = calculate_transform_matrix(&cube->t);
+	Mat4 transform_matrix = calculate_transform_matrix(&cube->transform);
 	Mat4 transform_proj_matrix = mat4_mul_mat4(&view_projection_matrix, &transform_matrix);
 
 
@@ -93,7 +89,7 @@ void draw_cube(Cube *cube) {
 
 void on_ready() {
 	perspective_projection = mat4_make_perspective(10.0 * (M_PI / 180.0), 1, 1.0, 100.0);
-	view_matrix = get_view_matrix(0, 0, -20);
+	view_matrix = get_view_matrix(0, 0, -20); // camera position
 	view_projection_matrix = mat4_mul_mat4(&perspective_projection, &view_matrix);
 }
 
@@ -101,9 +97,9 @@ void on_ready() {
 float speed = 0.02;
 void on_update() {
 	clear_back_buffer();
-	cube0.t.rot_x += speed;
-	cube0.t.rot_y += speed;
-	cube0.t.rot_z += speed;
+	cube0.transform.rot_x += speed;
+	cube0.transform.rot_y += speed;
+	cube0.transform.rot_z += speed;
 	draw_cube(&cube0);
 }
 

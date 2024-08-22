@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  000080fc  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000af35  00000000  00000000  00008125  2**0
+ 12 .debug_info   0000afd3  00000000  00000000  00008125  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00001fae  00000000  00000000  0001305a  2**0
+ 13 .debug_abbrev 00001fad  00000000  00000000  000130f8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000cc8  00000000  00000000  00015008  2**3
+ 14 .debug_aranges 00000cd8  00000000  00000000  000150a8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 000009f3  00000000  00000000  00015cd0  2**0
+ 15 .debug_rnglists 00000a00  00000000  00000000  00015d80  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  0001824f  00000000  00000000  000166c3  2**0
+ 16 .debug_macro  0001824f  00000000  00000000  00016780  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000ddc0  00000000  00000000  0002e912  2**0
+ 17 .debug_line   0000de4d  00000000  00000000  0002e9cf  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008a956  00000000  00000000  0003c6d2  2**0
+ 18 .debug_str    0008a96f  00000000  00000000  0003c81c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000c7028  2**0
+ 19 .comment      00000043  00000000  00000000  000c718b  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00003a88  00000000  00000000  000c706c  2**2
+ 20 .debug_frame  00003ae8  00000000  00000000  000c71d0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000059  00000000  00000000  000caaf4  2**0
+ 21 .debug_line_str 00000059  00000000  00000000  000cacb8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1446,8 +1446,8 @@ Disassembly of section .text:
  80010de:	4770      	bx	lr
 
 080010e0 <draw_cube>:
-#define POINT_COUNT 8
-#define EDGE_COUNT 12
+    .transform = { 0,0,0, 0,0,0, 3,3,3 }
+};
 
 
 
@@ -1458,7 +1458,7 @@ void draw_cube(Cube *cube) {
  80010e6:	f507 73b0 	add.w	r3, r7, #352	@ 0x160
  80010ea:	f5a3 73a6 	sub.w	r3, r3, #332	@ 0x14c
  80010ee:	6018      	str	r0, [r3, #0]
-	Mat4 transform_matrix = calculate_transform_matrix(&cube->t);
+	Mat4 transform_matrix = calculate_transform_matrix(&cube->transform);
  80010f0:	f507 73b0 	add.w	r3, r7, #352	@ 0x160
  80010f4:	f5a3 73a6 	sub.w	r3, r3, #332	@ 0x14c
  80010f8:	681b      	ldr	r3, [r3, #0]
@@ -1476,6 +1476,7 @@ void draw_cube(Cube *cube) {
 
 
 	Vec4 transformed[POINT_COUNT];
+
 	for (int i = 0; i < POINT_COUNT; ++i) {
  800111a:	2300      	movs	r3, #0
  800111c:	f8c7 315c 	str.w	r3, [r7, #348]	@ 0x15c
@@ -1712,7 +1713,7 @@ void on_ready() {
  8001366:	c50f      	stmia	r5!, {r0, r1, r2, r3}
  8001368:	e894 000f 	ldmia.w	r4, {r0, r1, r2, r3}
  800136c:	e885 000f 	stmia.w	r5, {r0, r1, r2, r3}
-	view_matrix = get_view_matrix(0, 0, -20);
+	view_matrix = get_view_matrix(0, 0, -20); // camera position
  8001370:	4c18      	ldr	r4, [pc, #96]	@ (80013d4 <on_ready+0x98>)
  8001372:	4638      	mov	r0, r7
  8001374:	4b18      	ldr	r3, [pc, #96]	@ (80013d8 <on_ready+0x9c>)
@@ -1767,7 +1768,7 @@ void on_update() {
  80013e2:	af00      	add	r7, sp, #0
 	clear_back_buffer();
  80013e4:	f001 f8ba 	bl	800255c <clear_back_buffer>
-	cube0.t.rot_x += speed;
+	cube0.transform.rot_x += speed;
  80013e8:	4b17      	ldr	r3, [pc, #92]	@ (8001448 <on_update+0x68>)
  80013ea:	f8d3 30cc 	ldr.w	r3, [r3, #204]	@ 0xcc
  80013ee:	4a17      	ldr	r2, [pc, #92]	@ (800144c <on_update+0x6c>)
@@ -1779,7 +1780,7 @@ void on_update() {
  80013fc:	461a      	mov	r2, r3
  80013fe:	4b12      	ldr	r3, [pc, #72]	@ (8001448 <on_update+0x68>)
  8001400:	f8c3 20cc 	str.w	r2, [r3, #204]	@ 0xcc
-	cube0.t.rot_y += speed;
+	cube0.transform.rot_y += speed;
  8001404:	4b10      	ldr	r3, [pc, #64]	@ (8001448 <on_update+0x68>)
  8001406:	f8d3 30d0 	ldr.w	r3, [r3, #208]	@ 0xd0
  800140a:	4a10      	ldr	r2, [pc, #64]	@ (800144c <on_update+0x6c>)
@@ -1791,7 +1792,7 @@ void on_update() {
  8001418:	461a      	mov	r2, r3
  800141a:	4b0b      	ldr	r3, [pc, #44]	@ (8001448 <on_update+0x68>)
  800141c:	f8c3 20d0 	str.w	r2, [r3, #208]	@ 0xd0
-	cube0.t.rot_z += speed;
+	cube0.transform.rot_z += speed;
  8001420:	4b09      	ldr	r3, [pc, #36]	@ (8001448 <on_update+0x68>)
  8001422:	f8d3 30d4 	ldr.w	r3, [r3, #212]	@ 0xd4
  8001426:	4a09      	ldr	r2, [pc, #36]	@ (800144c <on_update+0x6c>)
