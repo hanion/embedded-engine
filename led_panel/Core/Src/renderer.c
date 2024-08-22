@@ -43,9 +43,9 @@ void set_pixel_w(int x, int y, uint8_t w) {
 
 
 void get_rgb(uint8_t pixel, uint8_t *r, uint8_t *g, uint8_t *b) {
-	*r = (pixel >> 2) & 0x01;
-	*g = (pixel >> 1) & 0x01;
-	*b = (pixel     ) & 0x01;
+	*r = (pixel) & 0b100;
+	*g = (pixel) & 0b010;
+	*b = (pixel) & 0b001;
 }
 
 uint8_t current_row = 0;
@@ -99,18 +99,18 @@ void render_row() {
 // (time between rendering of 0th rows)
 // it does not account for the time it takes to render all rows
 // so it should be minimum time of 8 row rendering otherwise this is useless
-#define RENDER_INTERVAL_MS 10
-uint32_t last_render_time = 0;
+//#define RENDER_INTERVAL_MS 0
+//uint32_t last_render_time = 0;
 
 void render_buffer() {
-	if (current_row == 0) {
-		uint32_t tick = HAL_GetTick();
-		if (tick - last_render_time < RENDER_INTERVAL_MS) {
-			return;
-		} else {
-			last_render_time = tick;
-		}
-	}
+//	if (current_row == 0) {
+//		uint32_t tick = HAL_GetTick();
+//		if (tick - last_render_time < RENDER_INTERVAL_MS) {
+//			return;
+//		} else {
+//			last_render_time = tick;
+//		}
+//	}
 
 
 	render_row();
@@ -127,6 +127,9 @@ void render_buffer() {
 // Bresenham's line algorithm
 // (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
 void draw_line(int x0, int y0, int x1, int y1) {
+	draw_line_colored(x0, y0, x1, y1, 1, 1, 1);
+}
+void draw_line_colored(int x0, int y0, int x1, int y1, uint8_t r, uint8_t g,uint8_t b) {
 	int dx = abs(x1 - x0);
 	int sx = (x0 < x1) ? 1 : -1;
 	int dy = -abs(y1 - y0);
@@ -134,7 +137,7 @@ void draw_line(int x0, int y0, int x1, int y1) {
 	int error = dx + dy;
 
 	while (1) {
-		set_pixel_w(x0, y0, 1);
+		set_pixel(x0, y0, r, g, b);
 
 		if (x0 == x1 && y0 == y1) {
 			break;

@@ -20,11 +20,12 @@ Mat4 get_rotation_matrix_z(float angle);
 Mat4 get_scaling_matrix(float sx, float sy, float sz);
 
 
+
 Mat4 mat4_mul_mat4(const Mat4 *a, const Mat4 *b) {
-	Mat4 result = {0};
+	Mat4 result;
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
-			result.m[i][j] = 0.0f;
+			result.m[i][j] = 0.0;
 			for (int k = 0; k < 4; ++k) {
 				result.m[i][j] += a->m[i][k] * b->m[k][j];
 			}

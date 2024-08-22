@@ -16,9 +16,6 @@
 
 #if cube3d
 
-
-Mat4 perspective_projection;
-Mat4 view_matrix;
 Mat4 view_projection_matrix;
 
 
@@ -46,11 +43,17 @@ Cube cube0 = {
 		{ 1, -1,  1},
 		{ 1,  1,  1}
 	},
-    .edges = {
-        {0, 1}, {1, 3}, {3, 2}, {2, 0},
-        {4, 5}, {5, 7}, {7, 6}, {6, 4},
-        {0, 4}, {1, 5}, {2, 6}, {3, 7}
-    },
+//    .edges = {
+//        {0, 1}, {1, 3}, {3, 2}, {2, 0},
+//        {4, 5}, {5, 7}, {7, 6}, {6, 4},
+//        {0, 4}, {1, 5}, {2, 6}, {3, 7}
+//    },
+	.edges = {
+	        {0, 1}, {1, 5}, {2, 6},
+			{0, 4}, {4, 5}, {6, 4},
+			{0, 2}, {5, 7}, {7, 6},
+			{3, 2}, {1, 3}, {3, 7}
+	    },
     .transform = { -6,0,0, 0,0,0, 3,3,3 }
 };
 
@@ -89,16 +92,22 @@ void draw_cube(Cube *cube) {
 		transformed[i].y += (float)HEIGHT/2.0;
 	}
 
+	uint8_t color = 0b100;
 	for (int i = 0; i < EDGE_COUNT; ++i) {
 		Vec4 a = transformed[cube->edges[i][0]];
 		Vec4 b = transformed[cube->edges[i][1]];
 		draw_line(a.x, a.y, b.x, b.y);
+		//draw_line_colored(a.x, a.y, b.x, b.y, (color&0b100), (color&0b010), (color&&0b001));
+		color = (color >> 1);
+		if (!color) {
+			color = 0b100;
+		}
 	}
 }
 
 void on_ready() {
-	perspective_projection = mat4_make_perspective(4.0 * (M_PI / 180.0), 1, 1.0, 100.0);
-	view_matrix = get_view_matrix(0, 0, -15); // camera position
+	Mat4 perspective_projection = mat4_make_perspective(4.0 * (M_PI / 180.0), 1, 1.0, 100.0);
+	Mat4 view_matrix = get_view_matrix(0, 0, -15); // camera position
 	view_projection_matrix = mat4_mul_mat4(&perspective_projection, &view_matrix);
 }
 
