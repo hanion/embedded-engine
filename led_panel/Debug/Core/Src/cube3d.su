@@ -1,4 +1,4 @@
-../Core/Src/cube3d.c:80:6:draw_cube	368	static
+../Core/Src/cube3d.c:81:6:draw_cube	384	static
 ../Core/Src/cube3d.c:108:6:on_ready	216	static
 ../Core/Src/cube3d.c:117:6:on_update	16	static
 ../Core/Src/cube3d.c:132:6:on_button_pressed	4	static

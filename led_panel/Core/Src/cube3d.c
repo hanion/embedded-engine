@@ -7,9 +7,10 @@
 
 
 
-#include "base.h"
 #include "main.h"
-#include <math.h>
+#include "base.h"
+#include <stdint.h>
+#include "math.h"
 #include <stdlib.h>
 #include <string.h>
 #include "mat.h"
@@ -92,15 +93,14 @@ void draw_cube(Cube *cube) {
 		transformed[i].y += (float)HEIGHT/2.0;
 	}
 
-	uint8_t color = 0b100;
+	uint8_t color = 1;
 	for (int i = 0; i < EDGE_COUNT; ++i) {
 		Vec4 a = transformed[cube->edges[i][0]];
 		Vec4 b = transformed[cube->edges[i][1]];
-		draw_line(a.x, a.y, b.x, b.y);
-		//draw_line_colored(a.x, a.y, b.x, b.y, (color&0b100), (color&0b010), (color&&0b001));
-		color = (color >> 1);
-		if (!color) {
-			color = 0b100;
+		//draw_line(a.x, a.y, b.x, b.y);
+		draw_line_colored(a.x, a.y, b.x, b.y, (color&0b100), (color&0b010), (color&0b001));
+		if (++color == 8) {
+			color = 1;
 		}
 	}
 }

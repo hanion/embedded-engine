@@ -1,0 +1,7 @@
+../Core/Src/main.c:67:10:get_tick_delta_time	1
+../Core/Src/main.c:76:6:buzzer	1
+../Core/Src/main.c:82:13:on_ready	1
+../Core/Src/main.c:83:13:on_update	1
+../Core/Src/main.c:200:6:SystemClock_Config	3
+../Core/Src/main.c:91:5:main	16
+../Core/Src/main.c:484:6:Error_Handler	1

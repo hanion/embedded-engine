@@ -9,6 +9,7 @@
 #define INC_RENDERER_H_
 
 #include "base.h"
+#include <stdint.h>
 
 
 

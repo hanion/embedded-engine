@@ -31,7 +31,6 @@
 #ifndef __CORE_CM3_H_GENERIC
 #define __CORE_CM3_H_GENERIC
 
-#include <stdint.h>
 
 #ifdef __cplusplus
  extern "C" {
@@ -1726,32 +1725,43 @@ __STATIC_INLINE void NVIC_DecodePriority (uint32_t Priority, uint32_t PriorityGr
 
 /**
   \brief   Set Interrupt Vector
-  \details Sets an interrupt vector in SRAM based interrupt vector table.
-           The interrupt number can be positive to specify a device specific interrupt,
+  \details Sets an interrupt vector in SRAM-based interrupt vector table.
+           The interrupt number can be positive to specify a device-specific interrupt,
            or negative to specify a processor exception.
-           VTOR must been relocated to SRAM before.
+           VTOR must be relocated to SRAM before.
   \param [in]   IRQn      Interrupt number
   \param [in]   vector    Address of interrupt handler function
  */
 __STATIC_INLINE void __NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
 {
-  uint32_t *vectors = (uint32_t *)SCB->VTOR;
-  vectors[(int32_t)IRQn + NVIC_USER_IRQ_OFFSET] = vector;
-}
+    // Read the vector table base address from SCB->VTOR
+    uint32_t vector_table_base = (uint32_t)SCB->VTOR;
 
+    // Calculate the index in the vector table
+    uint32_t index = (uint32_t)IRQn + NVIC_USER_IRQ_OFFSET;
+
+    // Set the vector in the table
+    *((volatile uint32_t *)(vector_table_base + (index * sizeof(uint32_t)))) = vector;
+}
 
 /**
   \brief   Get Interrupt Vector
   \details Reads an interrupt vector from interrupt vector table.
-           The interrupt number can be positive to specify a device specific interrupt,
+           The interrupt number can be positive to specify a device-specific interrupt,
            or negative to specify a processor exception.
   \param [in]   IRQn      Interrupt number.
   \return                 Address of interrupt handler function
  */
 __STATIC_INLINE uint32_t __NVIC_GetVector(IRQn_Type IRQn)
 {
-  uint32_t *vectors = (uint32_t *)SCB->VTOR;
-  return vectors[(int32_t)IRQn + NVIC_USER_IRQ_OFFSET];
+    // Read the vector table address from SCB->VTOR
+    uint32_t vector_table_base = (uint32_t)SCB->VTOR;
+    
+    // Calculate the index in the vector table
+    uint32_t index = (uint32_t)IRQn + NVIC_USER_IRQ_OFFSET;
+    
+    // Read the vector from the table
+    return *((volatile uint32_t *)(vector_table_base + (index * sizeof(uint32_t))));
 }
 
 

@@ -1,0 +1,4 @@
+../Core/Src/cube3d.c:81:6:draw_cube	304	static
+../Core/Src/cube3d.c:109:6:on_ready	216	static
+../Core/Src/cube3d.c:118:6:on_update	24	static
+../Core/Src/cube3d.c:133:6:on_button_pressed	0	static

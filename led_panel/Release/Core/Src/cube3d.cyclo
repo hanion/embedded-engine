@@ -1,0 +1,4 @@
+../Core/Src/cube3d.c:81:6:draw_cube	3
+../Core/Src/cube3d.c:109:6:on_ready	1
+../Core/Src/cube3d.c:118:6:on_update	1
+../Core/Src/cube3d.c:133:6:on_button_pressed	1

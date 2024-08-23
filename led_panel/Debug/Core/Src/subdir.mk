@@ -22,24 +22,6 @@ C_SRCS += \
 ../Core/Src/system_stm32f1xx.c \
 ../Core/Src/testing.c 
 
-OBJS += \
-./Core/Src/cube3d.o \
-./Core/Src/display_string.o \
-./Core/Src/display_test.o \
-./Core/Src/event.o \
-./Core/Src/game0.o \
-./Core/Src/game_of_life.o \
-./Core/Src/main.o \
-./Core/Src/mat.o \
-./Core/Src/renderer.o \
-./Core/Src/rule110.o \
-./Core/Src/stm32f1xx_hal_msp.o \
-./Core/Src/stm32f1xx_it.o \
-./Core/Src/syscalls.o \
-./Core/Src/sysmem.o \
-./Core/Src/system_stm32f1xx.o \
-./Core/Src/testing.o 
-
 C_DEPS += \
 ./Core/Src/cube3d.d \
 ./Core/Src/display_string.d \
@@ -57,6 +39,24 @@ C_DEPS += \
 ./Core/Src/sysmem.d \
 ./Core/Src/system_stm32f1xx.d \
 ./Core/Src/testing.d 
+
+OBJS += \
+./Core/Src/cube3d.o \
+./Core/Src/display_string.o \
+./Core/Src/display_test.o \
+./Core/Src/event.o \
+./Core/Src/game0.o \
+./Core/Src/game_of_life.o \
+./Core/Src/main.o \
+./Core/Src/mat.o \
+./Core/Src/renderer.o \
+./Core/Src/rule110.o \
+./Core/Src/stm32f1xx_hal_msp.o \
+./Core/Src/stm32f1xx_it.o \
+./Core/Src/syscalls.o \
+./Core/Src/sysmem.o \
+./Core/Src/system_stm32f1xx.o \
+./Core/Src/testing.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
