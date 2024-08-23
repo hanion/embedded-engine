@@ -36,6 +36,7 @@ extern uint8_t (*front_buffer)[WIDTH][HEIGHT];
 extern uint8_t (*back_buffer)[WIDTH][HEIGHT];
 
 extern bool is_back_buffer_new;
+extern uint8_t RENDER_INTERVAL_MS;
 void render_buffer(void);
 void swap_buffers(void);
 

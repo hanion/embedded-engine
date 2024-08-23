@@ -10,37 +10,34 @@
 # ##############################################################################
 cmake_minimum_required(VERSION 3.20)
 
-
-
-
 # CMake toolchain definition for STM32CubeIDE
 
-set (CMAKE_SYSTEM_PROCESSOR "arm" CACHE STRING "")
-set (CMAKE_SYSTEM_NAME "Generic" CACHE STRING "")
+set(CMAKE_SYSTEM_PROCESSOR
+    "arm"
+    CACHE STRING "")
+set(CMAKE_SYSTEM_NAME
+    "Generic"
+    CACHE STRING "")
 
 # Skip link step during toolchain validation.
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-# Specify toolchain. NOTE When building from inside STM32CubeIDE the location of the toolchain is resolved by the "MCU Toolchain" project setting (via PATH).
-set(TOOLCHAIN_PREFIX   "arm-none-eabi-")
-set(CMAKE_C_COMPILER   "${TOOLCHAIN_PREFIX}gcc")
+# Specify toolchain. NOTE When building from inside STM32CubeIDE the location of
+# the toolchain is resolved by the "MCU Toolchain" project setting (via PATH).
+set(TOOLCHAIN_PREFIX "arm-none-eabi-")
+set(CMAKE_C_COMPILER "${TOOLCHAIN_PREFIX}gcc")
 set(CMAKE_ASM_COMPILER "${TOOLCHAIN_PREFIX}gcc")
 set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PREFIX}g++")
-set(CMAKE_AR           "${TOOLCHAIN_PREFIX}ar")
-set(CMAKE_LINKER       "{TOOLCHAIN_PREFIX}ld")
-set(CMAKE_OBJCOPY      "${TOOLCHAIN_PREFIX}objcopy")
-set(CMAKE_RANLIB       "${TOOLCHAIN_PREFIX}ranlib")
-set(CMAKE_SIZE         "${TOOLCHAIN_PREFIX}size")
-set(CMAKE_STRIP        "${TOOLCHAIN_PREFIX}strip")
+set(CMAKE_AR "${TOOLCHAIN_PREFIX}ar")
+set(CMAKE_LINKER "{TOOLCHAIN_PREFIX}ld")
+set(CMAKE_OBJCOPY "${TOOLCHAIN_PREFIX}objcopy")
+set(CMAKE_RANLIB "${TOOLCHAIN_PREFIX}ranlib")
+set(CMAKE_SIZE "${TOOLCHAIN_PREFIX}size")
+set(CMAKE_STRIP "${TOOLCHAIN_PREFIX}strip")
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-
-
-
-
-
 
 # ##################### CONSTANTS ######################################
 set(PROJECT_TYPE_EXECUTABLE "exe")
@@ -76,16 +73,18 @@ set(CMAKE_TOOLCHAIN_FILE "./cubeide-gcc.cmake")
 
 # Always generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_compile_options(-Wno-unsupported-option)
 
 # Recursively include all source files
 file(
   GLOB_RECURSE
   PROJECT_SOURCES
-  "Core/*.s"
-  "Core/*.c"
-  "Core/*.cpp"
-  "Drivers/*.c"
-  "Drivers/*.cpp")
+  "${CMAKE_SOURCE_DIR}/Core/*.s"
+  "${CMAKE_SOURCE_DIR}/Core/*.c"
+  "${CMAKE_SOURCE_DIR}/Core/*.cpp"
+  "${CMAKE_SOURCE_DIR}/Core/Src/*.cpp"
+  "${CMAKE_SOURCE_DIR}/Drivers/*.c"
+  "${CMAKE_SOURCE_DIR}/Drivers/*.cpp")
 
 # Recursively include all header files
 file(
@@ -149,3 +148,14 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -mcpu=cortex-m3 -mthumb")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -mcpu=cortex-m3 -mthumb")
 
 set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -x assembler-with-cpp")
+
+set(CMAKE_C_FLAGS
+    "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections -std=gnu11 -DUSE_HAL_DRIVER -DSTM32F103xB -Wall -fstack-usage -mfloat-abi=soft"
+)
+set(CMAKE_CXX_FLAGS
+    "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections -std=gnu++14 -DUSE_HAL_DRIVER -DSTM32F103xB -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -mfloat-abi=soft"
+)
+
+set(CMAKE_EXE_LINKER_FLAGS
+    "${CMAKE_EXE_LINKER_FLAGS} --specs=nosys.specs -Wl,-Map=\"${BuildArtifactFileBaseName}.map\" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group"
+)

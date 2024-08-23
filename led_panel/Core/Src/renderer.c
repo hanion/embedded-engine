@@ -48,27 +48,27 @@ void get_rgb(uint8_t pixel, uint8_t *r, uint8_t *g, uint8_t *b) {
 	*b = (pixel) & 0b001;
 }
 
+bool TEARING_FIX = false;
 uint8_t current_row = 0;
 void render_row() {
 	uint8_t r, g, b;
 	for (uint8_t segment = 0; segment < 16; ++segment) {
 		for (int8_t block = 1; block >= 0; --block) {
 			for (uint8_t window = 0; window < 4; ++window) {
-#if TEARING_FIX
-				uint8_t x = segment*4 + window -1*block;
-#else
 				uint8_t x = segment*4 + window;
-#endif
+				if (TEARING_FIX) {
+					x -= block;
+				}
 				uint8_t y = current_row + block*8;
 				uint8_t data_area_1 = (*front_buffer)[x][y];
 				uint8_t data_area_2 = (*front_buffer)[x][y + 16];
 
-#if TEARING_FIX
-				if (x >= WIDTH) {
-					data_area_1 = 0;
-					data_area_2 = 0;
+				if(TEARING_FIX) {
+					if (x >= WIDTH) {
+						data_area_1 = 0;
+						data_area_2 = 0;
+					}
 				}
-#endif
 
 
 				get_rgb(data_area_1, &r, &g, &b);
@@ -99,18 +99,19 @@ void render_row() {
 // (time between rendering of 0th rows)
 // it does not account for the time it takes to render all rows
 // so it should be minimum time of 8 row rendering otherwise this is useless
-//#define RENDER_INTERVAL_MS 0
-//uint32_t last_render_time = 0;
+// FIX: this needs to be set to 10 for scrolling text to not be doubled
+uint8_t RENDER_INTERVAL_MS = 0;
+uint32_t last_render_time = 0;
 
 void render_buffer() {
-//	if (current_row == 0) {
-//		uint32_t tick = HAL_GetTick();
-//		if (tick - last_render_time < RENDER_INTERVAL_MS) {
-//			return;
-//		} else {
-//			last_render_time = tick;
-//		}
-//	}
+	if (current_row == 0) {
+		uint32_t tick = HAL_GetTick();
+		if (tick - last_render_time < RENDER_INTERVAL_MS) {
+			return;
+		} else {
+			last_render_time = tick;
+		}
+	}
 
 
 	render_row();
@@ -233,7 +234,7 @@ const uint8_t text_bitmaps[69][5] = {
 	{ 0x44, 0x64, 0x54, 0x4C, 0x44 },  // z
 
 	{ 0x00, 0x00, 0x00, 0x00, 0x00 }, // SPACE
-    { 0x00, 0x07, 0x05, 0x07, 0x00 }, // !
+	{ 0x00, 0x6F, 0x6F, 0x00, 0x00 }, // !
     { 0x0A, 0x0E, 0x00, 0x0A, 0x0E }, // ?
 	{ 0x00, 0x60, 0x60, 0x00, 0x00 }, // .
     { 0x00, 0x20, 0x10, 0x08, 0x00 }, // ,

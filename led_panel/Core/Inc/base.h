@@ -126,8 +126,8 @@
 #define WIDTH 64
 #define HEIGHT 32
 
-#define TEARING_FIX 0
-#define DEBUG_NUMBERS 0
+extern bool TEARING_FIX;
+extern bool DEBUG_NUMBERS;
 
 #define display_test 0
 
@@ -135,7 +135,8 @@
 #define display_string 0
 #define rule110 0
 #define game_of_life 0
-#define cube3d 1
+#define cube3d 0
+#define cpptest 1
 
 
 #endif /* INC_BASE_H_ */

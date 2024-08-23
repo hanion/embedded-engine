@@ -1,3 +1,0 @@
-/home/han/dev/2024/stm32/testing/led_panel/build/CMakeFiles/ee-new.dir
-/home/han/dev/2024/stm32/testing/led_panel/build/CMakeFiles/edit_cache.dir
-/home/han/dev/2024/stm32/testing/led_panel/build/CMakeFiles/rebuild_cache.dir

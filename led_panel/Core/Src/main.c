@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "renderer.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -80,7 +81,13 @@ void buzzer() {
 }
 
 __WEAK void on_ready() {}
-__WEAK void on_update() {}
+__WEAK void on_update() {
+	clear_back_buffer();
+	draw_text("no program",0,0,false);
+	draw_text("set!",0,8,false);
+}
+
+bool DEBUG_NUMBERS = false;
 
 /* USER CODE END 0 */
 
@@ -128,34 +135,32 @@ int main(void)
 	clear_back_buffer();
 	on_ready();
 
-#define UPDATE_INTERVAL_MS 20
+#define UPDATE_INTERVAL_MS 10
 
-#if DEBUG_NUMBERS
-	uint32_t debug_var = 0;
-#endif
-
+	uint32_t debug_number_right = 0;
+	uint32_t debug_number_left = 0;
 	uint32_t accumulator = 0;
-
 	while (1) {
 		uint32_t delta = get_tick_delta_time();
 
 		accumulator += delta;
 		if (accumulator >= UPDATE_INTERVAL_MS) {
-			if (is_back_buffer_new){
-				continue;
-			}
 			DeltaTime = accumulator / 1000.0;
-			on_event();
-			on_update();
-
-#if DEBUG_NUMBERS
-			draw_number(accumulator, 0, HEIGHT-7, false);
-			draw_number(debug_var, WIDTH-1-calculate_number_width(debug_var, false), HEIGHT-7, false);
-#endif
-
+			debug_number_left = accumulator;
 			accumulator -= UPDATE_INTERVAL_MS;
-			//accumulator = 0;
-			is_back_buffer_new = true;
+
+			on_event();
+			if (!is_back_buffer_new){
+				on_update();
+
+				if (DEBUG_NUMBERS) {
+					draw_number(debug_number_left, 0, HEIGHT-7, false);
+					draw_number(debug_number_right, WIDTH-1-calculate_number_width(debug_number_right, false), HEIGHT-7, false);
+				}
+
+				is_back_buffer_new = true;
+			}
+
 		}
 
 //		render_accumulator += delta;
@@ -176,10 +181,10 @@ int main(void)
 			}
 		}
 
-#if DEBUG_NUMBERS
-		uint32_t current_time = HAL_GetTick();
-		debug_var = current_time - last_tick_time;
-#endif
+		if (DEBUG_NUMBERS) {
+			uint32_t current_time = HAL_GetTick();
+			debug_number_right = current_time - last_tick_time;
+		}
 
 //		// this should also do the same
 //		if (debug_var < UPDATE_INTERVAL_MS) {
@@ -508,3 +513,5 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
+

@@ -1,4 +1,0 @@
-../Core/Src/event.c:12:13:on_button_pressed	1
-../Core/Src/event.c:13:13:on_button_held	1
-../Core/Src/event.c:14:13:on_button_released	1
-../Core/Src/event.c:19:6:on_event	4

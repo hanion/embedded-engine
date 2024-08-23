@@ -50,6 +50,10 @@ void scroll_msg(Message* msg) {
 }
 
 void on_ready() {
+	// NOTE: 10 fixes double x, but 8th rows are brighter
+	RENDER_INTERVAL_MS = 0;
+	TEARING_FIX = true;
+	DEBUG_NUMBERS = true;
 	msgs[0] = msg0;
 	msgs[1] = msg1;
 	for (uint8_t i = 0; i < MSG_COUNT; ++i) {

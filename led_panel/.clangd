@@ -12,3 +12,5 @@ CompileFlags:
   Compiler: gcc
 Diagnostics:
   UnusedIncludes: None
+  Suppress:
+    - drv_unsupported_opt_for_target
