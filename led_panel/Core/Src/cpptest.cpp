@@ -1,13 +1,9 @@
 
-#include "base.h"
-#include "main.h"
+#include "base.hpp"
 #include <stdint.h>
 #include "math.h"
 #include <stdlib.h>
 #include <string.h>
-#include <string>
-#include "mat.h"
-#include "renderer.h"
 
 #if cpptest
 
@@ -37,16 +33,20 @@ private:
 
 TestMessage tm;
 void on_ready() {
-	RENDER_INTERVAL_MS = 0;
+	RENDER_INTERVAL_MS = 10;
+	TEARING_FIX = true;
 }
+bool scrol = true;
 void on_update() {
 	clear_back_buffer();
 	tm.draw();
+	if (scrol)
 	tm.scroll();
 }
 
 
 void on_button_pressed() {
+	scrol = !scrol;
 }
 
 #endif

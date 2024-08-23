@@ -6,8 +6,7 @@
  */
 
 
-#include "base.h"
-#include "main.h"
+#include "base.hpp"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,19 +1,27 @@
-/*
- * 3d_cube.c
- *
- *  Created on: Aug 21, 2024
- *      Author: han
- */
-
-
+#include "application.hpp"
+#include <math.h>
 
 #include "base.hpp"
+#include "renderer.hpp"
+#include "event.hpp"
 #include <stdint.h>
-#include "math.h"
 #include <stdlib.h>
 #include <string.h>
 
-#if cube3d
+class App3D : public Application {
+public:
+	App3D() {}
+	~App3D() {}
+
+	virtual void on_ready() override final;
+	virtual void on_update() override final;
+	virtual void on_event(Event event) override final;
+};
+
+Application* CreateApplication() {
+	return new App3D();
+}
+
 
 Mat4 view_projection_matrix;
 
@@ -77,14 +85,14 @@ Cube pyramid0 = {
 };
 
 void draw_cube(Cube *cube) {
-	Mat4 transform_matrix = calculate_transform_matrix(&cube->transform);
-	Mat4 transform_proj_matrix = mat4_mul_mat4(&view_projection_matrix, &transform_matrix);
+	Mat4 transform_matrix = Math::calculate_transform_matrix(&cube->transform);
+	Mat4 transform_proj_matrix = Math::mat4_mul_mat4(&view_projection_matrix, &transform_matrix);
 
 	Vec4 transformed[POINT_COUNT];
 	for (int i = 0; i < POINT_COUNT; ++i) {
 		Vec4 model_space = { cube->p[i].x, cube->p[i].y, cube->p[i].z, 1.0 };
 
-		transformed[i] = mat4_mul_vec4_project(&transform_proj_matrix, &model_space);
+		transformed[i] = Math::mat4_mul_vec4_project(&transform_proj_matrix, &model_space);
 
 		// center
 		transformed[i].x += (float)WIDTH/2.0;
@@ -95,25 +103,27 @@ void draw_cube(Cube *cube) {
 	for (int i = 0; i < EDGE_COUNT; ++i) {
 		Vec4 a = transformed[cube->edges[i][0]];
 		Vec4 b = transformed[cube->edges[i][1]];
- 		//draw_line(a.x, a.y, b.x, b.y);
-		draw_line_colored(a.x, a.y, b.x, b.y, (color&0b100), (color&0b010), (color&0b001));
+ 		//Renderer::draw_line(a.x, a.y, b.x, b.y);
+		Renderer::draw_line_colored(a.x, a.y, b.x, b.y, (color&0b100), (color&0b010), (color&0b001));
 		if (++color == 8) {
 			color = 1;
 		}
 	}
 }
 
-void on_ready() {
-	Mat4 perspective_projection = mat4_make_perspective(4.0 * (M_PI / 180.0), 1, 1.0, 100.0);
-	Mat4 view_matrix = get_view_matrix(0, 0, -15); // camera position
-	view_projection_matrix = mat4_mul_mat4(&perspective_projection, &view_matrix);
+
+void App3D::on_ready() {
+	Mat4 perspective_projection = Math::mat4_make_perspective(4.0 * (M_PI / 180.0), 1, 1.0, 100.0);
+	Mat4 view_matrix = Math::get_view_matrix(0, 0, -15); // camera position
+	view_projection_matrix = Math::mat4_mul_mat4(&perspective_projection, &view_matrix);
 }
+
 
 
 float speed = 0.01;
 int level = 2;
-void on_update() {
-	clear_back_buffer();
+void App3D::on_update() {
+	Renderer::clear_back_buffer();
 	cube0.transform.rot_x += speed * level;
 	cube0.transform.rot_y += speed * level;
 	cube0.transform.rot_z += speed * level;
@@ -127,10 +137,13 @@ void on_update() {
 }
 
 
-void on_button_pressed() {
-	if (++level > 5) {
-		level = 0;
+
+void App3D::on_event(Event event) {
+	if (event.type == Event::Type::Pressed) {
+		if (++level > 5) {
+			level = 0;
+		}
 	}
 }
 
-#endif
+

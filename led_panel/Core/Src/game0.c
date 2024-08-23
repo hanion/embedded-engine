@@ -4,8 +4,7 @@
  *  Created on: Aug 16, 2024
  *      Author: han
  */
-#include "base.h"
-#include "main.h"
+#include "base.hpp"
 #include <stdlib.h>
 #include <time.h>
 

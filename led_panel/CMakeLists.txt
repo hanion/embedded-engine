@@ -82,6 +82,7 @@ file(
   "${CMAKE_SOURCE_DIR}/Core/*.s"
   "${CMAKE_SOURCE_DIR}/Core/*.c"
   "${CMAKE_SOURCE_DIR}/Core/*.cpp"
+  "${CMAKE_SOURCE_DIR}/Core/src/*.cpp"
   "${CMAKE_SOURCE_DIR}/Core/Src/*.cpp"
   "${CMAKE_SOURCE_DIR}/Drivers/*.c"
   "${CMAKE_SOURCE_DIR}/Drivers/*.cpp")
@@ -94,6 +95,7 @@ file(
   "/usr/local/include"
   "/usr/lib/clang/18/include"
   "${CMAKE_SOURCE_DIR}/Core"
+  "${CMAKE_SOURCE_DIR}/Core/src"
   "${CMAKE_SOURCE_DIR}/Core/Inc"
   "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include"
   "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Include"

@@ -13,6 +13,14 @@
 #include <stdbool.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+void Error_Handler(void);
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+#ifdef __cplusplus
+}
+#endif
 
 #define RESET_1_Pin GPIO_PIN_13
 #define RESET_1_GPIO_Port GPIOC
@@ -136,7 +144,7 @@ extern bool DEBUG_NUMBERS;
 #define rule110 0
 #define game_of_life 0
 #define cube3d 0
-#define cpptest 1
+#define cpptest 0
 
 
 #endif /* INC_BASE_H_ */
