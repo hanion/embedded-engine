@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "cube.hpp"
 #include "dino.hpp"
+#include "rule110.hpp"
 
 
 class ShowcaseDemos : public Application {
@@ -15,11 +16,10 @@ public:
 private:
 	CubeDemo cube_demo;
 	DinoGame dino_game;
-	Application* m_active_app = &dino_game;
-
+	Rule110 rule110;
+	Application* m_active_app = &rule110;
 };
 
-// TODO: can this be a stack allocated app ???
 Application* CreateApplication() {
 	return new ShowcaseDemos();
 }
