@@ -26,12 +26,6 @@ Cube cube0 = {
 		{4, 5}, {5, 7}, {7, 6}, {6, 4},
 		{0, 4}, {1, 5}, {2, 6}, {3, 7}
 	},
-// 	.edges = {
-// 		{0, 1}, {1, 5}, {2, 6},
-// 		{0, 4}, {4, 5}, {6, 4},
-// 		{0, 2}, {5, 7}, {7, 6},
-// 		{3, 2}, {1, 3}, {3, 7}
-// 	    },
     .transform = { -6,0,0, 0,0,0, 3,3,3 }
 };
 
@@ -72,14 +66,14 @@ void CubeDemo::draw_cube(Cube *cube) {
 		transformed[i].y += (float)HEIGHT/2.0;
 	}
 
-	uint8_t color = 1;
+	Color color = 1;
 	for (int i = 0; i < EDGE_COUNT; ++i) {
 		Vec4 a = transformed[cube->edges[i][0]];
 		Vec4 b = transformed[cube->edges[i][1]];
  		//Renderer::draw_line(a.x, a.y, b.x, b.y);
-		Renderer::draw_line_colored(a.x, a.y, b.x, b.y, (color&0b100), (color&0b010), (color&0b001));
-		if (++color == 8) {
-			color = 1;
+		Renderer::draw_line_colored(a.x, a.y, b.x, b.y, color);
+		if (++color.value == 8) {
+			color.value = 1;
 		}
 	}
 }

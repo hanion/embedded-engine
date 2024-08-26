@@ -107,9 +107,9 @@ void DinoGame::draw_ground() {
 }
 void DinoGame::draw_dino() {
 	if (!dino.is_dead) {
-		Renderer::Draw_Rect(dino.rect, {0, 1, 0});
+		Renderer::draw_Rect(dino.rect, {0, 1, 0});
 	} else {
-		Renderer::Draw_Rect(dino.rect, {1, 0, 0});
+		Renderer::draw_Rect(dino.rect, {1, 0, 0});
 	}
 }
 
@@ -123,7 +123,7 @@ void DinoGame::draw_obstacles() {
 			(obstacles[i].rect.x > WIDTH || obstacles[i].rect.y > HEIGHT)) {
 			continue;
 		}
-		Renderer::Draw_Rect(obstacles[i].rect, {0, 0, 1});
+		Renderer::draw_Rect(obstacles[i].rect, {0, 0, 1});
 	}
 }
 

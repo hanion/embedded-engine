@@ -21,26 +21,15 @@ void Renderer::clear_back_buffer(void) {
 	memset((*back_buffer), 0, sizeof(buffer1));
 }
 
-void Renderer::set_pixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
+void Renderer::set_pixel(int x, int y, Color color) {
 	if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
 		return;
 	}
 
-	r = r ? 1 : 0;
-	g = g ? 1 : 0;
-	b = b ? 1 : 0;
-	(*back_buffer)[x][y] = (r << 2) | (g << 1) | b;
-}
-void Renderer::set_pixel_w(int x, int y, uint8_t w) {
-	set_pixel(x, y, w, w, w);
+	(*back_buffer)[x][y] = color.value;
 }
 
 
-void get_rgb(uint8_t pixel, uint8_t *r, uint8_t *g, uint8_t *b) {
-	*r = (pixel) & 0b100;
-	*g = (pixel) & 0b010;
-	*b = (pixel) & 0b001;
-}
 
 bool TEARING_FIX = false;
 uint8_t current_row = 0;
@@ -54,8 +43,10 @@ void Renderer::render_row() {
 					x -= block;
 				}
 				uint8_t y = current_row + block*8;
-				uint8_t data_area_1 = (*front_buffer)[x][y];
-				uint8_t data_area_2 = (*front_buffer)[x][y + 16];
+				Color data_area_1;
+				data_area_1.value = (*front_buffer)[x][y];
+				Color data_area_2;
+				data_area_2.value = (*front_buffer)[x][y + 16];
 
 				if(TEARING_FIX) {
 					if (x >= WIDTH) {
@@ -65,15 +56,13 @@ void Renderer::render_row() {
 				}
 
 
-				get_rgb(data_area_1, &r, &g, &b);
-				R1(r);
-				G1(g);
-				B1(b);
+				R1(data_area_1.r());
+				G1(data_area_1.g());
+				B1(data_area_1.b());
 
-				get_rgb(data_area_2, &r, &g, &b);
-				R2(r);
-				G2(g);
-				B2(b);
+				R2(data_area_2.r());
+				G2(data_area_2.g());
+				B2(data_area_2.b());
 
 				CLK_H;
 				CLK_L;
@@ -122,9 +111,9 @@ void Renderer::render_buffer() {
 // Bresenham's line algorithm
 // (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
 void Renderer::draw_line(int x0, int y0, int x1, int y1) {
-	draw_line_colored(x0, y0, x1, y1, 1, 1, 1);
+	draw_line_colored(x0, y0, x1, y1, {1});
 }
-void Renderer::draw_line_colored(int x0, int y0, int x1, int y1, uint8_t r, uint8_t g,uint8_t b) {
+void Renderer::draw_line_colored(int x0, int y0, int x1, int y1, Color color) {
 	int dx = abs(x1 - x0);
 	int sx = (x0 < x1) ? 1 : -1;
 	int dy = -abs(y1 - y0);
@@ -132,7 +121,7 @@ void Renderer::draw_line_colored(int x0, int y0, int x1, int y1, uint8_t r, uint
 	int error = dx + dy;
 
 	while (1) {
-		set_pixel(x0, y0, r, g, b);
+		set_pixel(x0, y0, color);
 
 		if (x0 == x1 && y0 == y1) {
 			break;
@@ -156,18 +145,15 @@ void Renderer::draw_line_colored(int x0, int y0, int x1, int y1, uint8_t r, uint
 	}
 }
 
-void Renderer::draw_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t r, uint8_t g, uint8_t b) {
+void Renderer::draw_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, Color color) {
 	for (uint8_t i = y; i < y + height && i < HEIGHT; ++i) {
 		for (uint8_t j = x; j < x + width && j < WIDTH; ++j) {
-			set_pixel(j, i, r, g, b);
+			set_pixel(j, i, color);
 		}
 	}
 }
-void Renderer::draw_Rect(Rect rect, uint8_t r, uint8_t g, uint8_t b) {
-	draw_rect(rect.x, rect.y, rect.width, rect.height, r, g, b);
-}
-void Renderer::Draw_Rect(Rect rect, Color color) {
-	draw_Rect(rect, color.r, color.g, color.b);
+void Renderer::draw_Rect(Rect rect, Color color) {
+	draw_rect(rect.x, rect.y, rect.width, rect.height, color);
 }
 
 
@@ -250,10 +236,10 @@ const uint8_t text_bitmaps[69][5] = {
 
 
 void set_pixel_w_bold(int x, int y, uint8_t w) {
-	Renderer::set_pixel_w(x  , y  , w);
-	Renderer::set_pixel_w(x+1, y  , w);
-	Renderer::set_pixel_w(x  , y+1, w);
-	Renderer::set_pixel_w(x+1, y+1, w);
+	Renderer::set_pixel(x  , y  , w);
+	Renderer::set_pixel(x+1, y  , w);
+	Renderer::set_pixel(x  , y+1, w);
+	Renderer::set_pixel(x+1, y+1, w);
 }
 
 void draw_digit(uint8_t num, int x, int y, bool bold) {
@@ -275,7 +261,7 @@ void draw_digit(uint8_t num, int x, int y, bool bold) {
 				if (bold) {
 					set_pixel_w_bold(x + 2 * col, y + 2 * row, 1);
 				} else {
-					Renderer::set_pixel_w(x + col, y + row, 1);
+					Renderer::set_pixel(x + col, y + row, 1);
 				}
 			}
 		}
@@ -345,7 +331,7 @@ void draw_char(char c, int x, int y, bool bold) {
 				if (bold) {
 					set_pixel_w_bold(x + 2 * col, y + 2 * row, 1);
 				} else {
-					Renderer::set_pixel_w(x + col, y + row, 1);
+					Renderer::set_pixel(x + col, y + row, 1);
 				}
 			}
 		}

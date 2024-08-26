@@ -46,7 +46,7 @@ void Rule110::copy_to_back_buffer() {
 
 	for (uint8_t x = 0; x < WIDTH; ++x) {
 		for (uint8_t y = 0; y < HEIGHT; ++y) {
-			Renderer::set_pixel_w(x, y, rbuffer[x][y]);
+			Renderer::set_pixel(x, y, rbuffer[x][y]);
 		}
 	}
 }
