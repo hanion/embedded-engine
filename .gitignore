@@ -1,6 +1,5 @@
 .metadata
+.cache/
 
-led_panel/build/
-led_panel/.cache/
-led_panel/Debug/
-led_panel/Release/
+build_stm/
+build_sim/

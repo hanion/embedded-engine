@@ -1,72 +1,13 @@
-/*
- * game0.c
- *
- *  Created on: Aug 16, 2024
- *      Author: han
- */
+#include "dino.hpp"
+
+
 #include "base.hpp"
+#include "renderer.hpp"
+
 #include <stdlib.h>
 #include <time.h>
 
-#if dino_game
-
-
-#define GROUND_Y 26
-#define GRAVITY 0.4
-
-#define DINO_START_Y 23
-#define DINO_JUMP_TO_Y 13
-#define DINO_JUMP_VELOCITY -60.0
-#define DINO_WIDTH 2
-#define DINO_HEIGHT 3
-
-
-#define OBSTACLES_VELOCITY -25.0
-#define OBSTACLES_MAX 10
-#define OBSTACLES_MIN_SPACING 12
-#define OBSTACLES_MAX_SPACING 40
-
-float dino_accel = 0;
-
-
-bool check_collision(Rect a, Rect b);
-void dino_die();
-void dino_jump();
-void dino_respawn();
-
-typedef struct {
-    Rect rect;
-    float real_pos;
-    float jump_velocity;
-    bool is_jumping;
-    bool is_dead;
-    int score;
-} Dino;
-
-Dino dino = {
-	.rect = { 10, DINO_START_Y, DINO_WIDTH, DINO_HEIGHT },
-	.real_pos = DINO_START_Y,
-	.jump_velocity = 0,
-	.is_jumping = false,
-	.is_dead = false,
-	.score = 0
-};
-uint32_t dino_death_time = 0;
-
-
-typedef struct {
-	Rect rect;
-	bool active;
-	float real_x;
-	float velocity;
-} Obstacle;
-
-
-
-Obstacle obstacles[OBSTACLES_MAX];
-
-
-void respawn_obstacle(int i) {
+void DinoGame::respawn_obstacle(int i) {
 	int last = WIDTH - OBSTACLES_MIN_SPACING;
 	for (int j = 0; j < OBSTACLES_MAX; ++j) {
 		if (obstacles[j].rect.x > last) {
@@ -80,7 +21,7 @@ void respawn_obstacle(int i) {
 		obstacles[i].rect.x += offset;
 	}
 	if (obstacles[i].rect.x - last < OBSTACLES_MIN_SPACING) {
-		buzzer();
+		//buzzer();
 	}
 
 	obstacles[i].velocity = OBSTACLES_VELOCITY + OBSTACLES_VELOCITY * (dino.score/100.0);
@@ -101,18 +42,17 @@ void respawn_obstacle(int i) {
 	obstacles[i].active = true;
 }
 
-void init_obstacles() {
+void DinoGame::init_obstacles() {
 	for (int i = 0; i < OBSTACLES_MAX; ++i) {
 		obstacles[i].rect.x = -10;
 		obstacles[i].rect.y = 10;
 		obstacles[i].real_x = -10.0;
 		obstacles[i].velocity = OBSTACLES_VELOCITY;
 		obstacles[i].active = false;
-
 	}
 }
 
-void move_obstacles() {
+void DinoGame::move_obstacles() {
 	if (dino.is_dead) {
 		return;
 	}
@@ -140,8 +80,7 @@ void move_obstacles() {
 	}
 }
 
-
-void move_dino() {
+void DinoGame::move_dino() {
 	if (!dino.is_jumping) {
 		return;
 	}
@@ -163,48 +102,46 @@ void move_dino() {
 }
 
 
-
-void draw_ground() {
-	draw_line(0, GROUND_Y, 63, GROUND_Y);
+void DinoGame::draw_ground() {
+	Renderer::draw_line(0, GROUND_Y, 63, GROUND_Y);
 }
-void draw_dino() {
+void DinoGame::draw_dino() {
 	if (!dino.is_dead) {
-		Draw_Rect(dino.rect, (Color){0, 1, 0});
+		Renderer::Draw_Rect(dino.rect, {0, 1, 0});
 	} else {
-		Draw_Rect(dino.rect, (Color){1, 0, 0});
+		Renderer::Draw_Rect(dino.rect, {1, 0, 0});
 	}
 }
 
-void draw_obstacles() {
+
+void DinoGame::draw_obstacles() {
 	for (int i = 0; i < OBSTACLES_MAX; ++i) {
 		if (!obstacles[i].active) {
 			continue;
 		}
-		if (obstacles[i].rect.x < 0 || obstacles[i].rect.y < 0 ) {
+		if (obstacles[i].rect.x < 0 || obstacles[i].rect.y < 0 || 
+			(obstacles[i].rect.x > WIDTH || obstacles[i].rect.y > HEIGHT)) {
 			continue;
 		}
-		if (obstacles[i].rect.x > WIDTH || obstacles[i].rect.y > HEIGHT ) {
-			continue;
-		}
-		Draw_Rect(obstacles[i].rect, (Color){0, 0, 1});
+		Renderer::Draw_Rect(obstacles[i].rect, {0, 0, 1});
 	}
 }
 
-void draw_score() {
-	draw_number(dino.score, 2, 2, false);
+
+void DinoGame::draw_score() {
+	Renderer::draw_number(dino.score, 2, 2, false);
 	return;
 	uint8_t x = 2;
 	uint8_t y = 2;
 
 	for (uint8_t var = 0; var < 10; ++var) {
-		draw_number(var, x, y, true);
+		Renderer::draw_number(var, x, y, true);
 		x += 8;
 	}
 }
 
 
-
-bool check_collision(Rect a, Rect b) {
+bool DinoGame::check_collision(Rect a, Rect b) {
 	return (a.x < (b.x + b.width) &&
 			(a.x + a.width) > b.x &&
 			a.y < (b.y + b.height) &&
@@ -212,15 +149,14 @@ bool check_collision(Rect a, Rect b) {
 }
 
 
-void dino_die() {
+void DinoGame::dino_die() {
 	dino.is_dead = true;
 	dino.is_jumping = false;
 	dino_death_time = HAL_GetTick();
 	//buzzer();
 }
 
-bool dead_dino_jumped = false;
-void dino_respawn() {
+void DinoGame::dino_respawn() {
 	dino.score = 0;
 	dino.is_dead = false;
 	dino.is_jumping = false;
@@ -229,7 +165,7 @@ void dino_respawn() {
 	dino.real_pos = dino.rect.y;
 }
 
-void dino_jump() {
+void DinoGame::dino_jump() {
 	dino.is_jumping = true;
 	dino.jump_velocity = DINO_JUMP_VELOCITY;
 	float v0 = DINO_JUMP_VELOCITY;
@@ -237,13 +173,13 @@ void dino_jump() {
 	dino_accel = (v0*v0)/(2*d);
 }
 
-void on_ready() {
+void DinoGame::on_ready() {
 	//srand(time(NULL));
 	init_obstacles();
 }
 
-void on_update() {
-	clear_back_buffer();
+void DinoGame::on_update() {
+	Renderer::clear_back_buffer();
 
 	draw_ground();
 	draw_dino();
@@ -268,25 +204,18 @@ void on_update() {
 }
 
 
-
-void on_button_pressed() {
-	if (!dino.is_dead && !dino.is_jumping) {
-		dino_jump();
+void DinoGame::on_event(Event event) {
+	if (event.type == Event::Type::Pressed) {
+		if (!dino.is_dead && !dino.is_jumping) {
+			dino_jump();
+		}
+	
 	}
-}
-void on_button_held() {
-	if (!dino.is_dead && dino.is_jumping) {
-		dino.jump_velocity -= 60 * DeltaTime;
+	else if (event.type == Event::Type::Pressed) {
+		if (!dino.is_dead && dino.is_jumping) {
+			dino.jump_velocity -= 60 * DeltaTime;
+		}
 	}
+
 }
-void on_button_released() {
-}
-
-#endif
-
-
-
-
-
-
 

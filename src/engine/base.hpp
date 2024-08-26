@@ -139,12 +139,6 @@ extern bool DEBUG_NUMBERS;
 
 #define display_test 0
 
-#define dino_game 0
-#define display_string 0
-#define rule110 0
-#define game_of_life 0
-#define cube3d 0
-#define cpptest 0
 
 
 #endif /* INC_BASE_H_ */

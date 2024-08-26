@@ -10,35 +10,6 @@
 # ##############################################################################
 cmake_minimum_required(VERSION 3.20)
 
-# CMake toolchain definition for STM32CubeIDE
-
-set(CMAKE_SYSTEM_PROCESSOR
-    "arm"
-    CACHE STRING "")
-set(CMAKE_SYSTEM_NAME
-    "Generic"
-    CACHE STRING "")
-
-# Skip link step during toolchain validation.
-set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
-
-# Specify toolchain. NOTE When building from inside STM32CubeIDE the location of
-# the toolchain is resolved by the "MCU Toolchain" project setting (via PATH).
-set(TOOLCHAIN_PREFIX "arm-none-eabi-")
-set(CMAKE_C_COMPILER "${TOOLCHAIN_PREFIX}gcc")
-set(CMAKE_ASM_COMPILER "${TOOLCHAIN_PREFIX}gcc")
-set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PREFIX}g++")
-set(CMAKE_AR "${TOOLCHAIN_PREFIX}ar")
-set(CMAKE_LINKER "{TOOLCHAIN_PREFIX}ld")
-set(CMAKE_OBJCOPY "${TOOLCHAIN_PREFIX}objcopy")
-set(CMAKE_RANLIB "${TOOLCHAIN_PREFIX}ranlib")
-set(CMAKE_SIZE "${TOOLCHAIN_PREFIX}size")
-set(CMAKE_STRIP "${TOOLCHAIN_PREFIX}strip")
-
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-
 # ##################### CONSTANTS ######################################
 set(PROJECT_TYPE_EXECUTABLE "exe")
 set(PROJECT_TYPE_STATIC_LIBRARY "static-lib")
@@ -61,17 +32,14 @@ set(MFLOAT_ABI_MIX "-mfloat-abi=softfp")
 # ##############################################################################
 
 # ##################### VARIABLES ######################################
-set(PROJECT_NAME "ee-new")
+set(PROJECT_NAME "ee-stm")
 set(PROJECT_TYPE "exe")
-set(LINKER_SCRIPT "../STM32F103R8TX_FLASH.ld")
+set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/STM32F103R8TX_FLASH.ld")
 set(MCPU "-mcpu=Cortex-M3")
 set(MFLOAT_ABI "")
 # set (RUNTIME_LIBRARY          "--specs=nosys.specs") set
 # (RUNTIME_LIBRARY_SYSCALLS "--specs=nosys.specs")
 
-set(CMAKE_TOOLCHAIN_FILE "./cubeide-gcc.cmake")
-
-# Always generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_compile_options(-Wno-unsupported-option)
 
@@ -79,28 +47,31 @@ add_compile_options(-Wno-unsupported-option)
 file(
   GLOB_RECURSE
   PROJECT_SOURCES
-  "${CMAKE_SOURCE_DIR}/Core/*.s"
-  "${CMAKE_SOURCE_DIR}/Core/*.c"
-  "${CMAKE_SOURCE_DIR}/Core/*.cpp"
-  "${CMAKE_SOURCE_DIR}/Core/src/*.cpp"
-  "${CMAKE_SOURCE_DIR}/Core/Src/*.cpp"
+  "${CMAKE_SOURCE_DIR}/../../engine/*.cpp"
+  "${CMAKE_SOURCE_DIR}/../../app/*.cpp"
+  "${CMAKE_SOURCE_DIR}/../../engine/*.c"
+  "${CMAKE_SOURCE_DIR}/../../app/*.c"
+  "${CMAKE_SOURCE_DIR}/*.c"
+  "${CMAKE_SOURCE_DIR}/*.cpp"
+  "${CMAKE_SOURCE_DIR}/*.s"
   "${CMAKE_SOURCE_DIR}/Drivers/*.c"
   "${CMAKE_SOURCE_DIR}/Drivers/*.cpp")
 
 # Recursively include all header files
-file(
-  GLOB_RECURSE
-  PROJECT_INCLUDES
-  "/usr/include"
-  "/usr/local/include"
-  "/usr/lib/clang/18/include"
-  "${CMAKE_SOURCE_DIR}/Core"
-  "${CMAKE_SOURCE_DIR}/Core/src"
-  "${CMAKE_SOURCE_DIR}/Core/Inc"
-  "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include"
-  "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Include"
-  "${CMAKE_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc"
-  "${CMAKE_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy")
+# file(
+#   GLOB_RECURSE
+#   PROJECT_INCLUDES
+#   # "/usr/include"
+#   # "/usr/local/include"
+#   # "/usr/lib/clang/18/include"
+#   "${CMAKE_SOURCE_DIR}"
+#   "${CMAKE_SOURCE_DIR}/src/platform/stm/"
+#   "${CMAKE_SOURCE_DIR}/../../engine/"
+#   "${CMAKE_SOURCE_DIR}/../../app/"
+#   "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include"
+#   "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Include"
+#   "${CMAKE_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc"
+#   "${CMAKE_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy")
 
 set(PROJECT_DEFINES # LIST COMPILER DEFINITIONS HERE
 )
@@ -128,13 +99,13 @@ add_compile_definitions(${PROJECT_DEFINES})
 add_definitions(-DSTM32F103R8)
 
 include_directories(
-  "${CMAKE_SOURCE_DIR}/Core"
-  "${CMAKE_SOURCE_DIR}/Core/Inc"
+  "${CMAKE_SOURCE_DIR}/../../engine"
+  "${CMAKE_SOURCE_DIR}/../../app"
+  "${CMAKE_SOURCE_DIR}"
   "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include"
   "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Include"
   "${CMAKE_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc"
   "${CMAKE_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy")
-# include_directories (${PROJECT_INCLUDES})
 
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")
