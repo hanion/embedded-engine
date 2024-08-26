@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "cube.hpp"
 #include "dino.hpp"
+#include "game_of_life.hpp"
 #include "rule110.hpp"
 
 
@@ -17,7 +18,8 @@ private:
 	CubeDemo cube_demo;
 	DinoGame dino_game;
 	Rule110 rule110;
-	Application* m_active_app = &rule110;
+	GameOfLife game_of_life;
+	Application* m_active_app = &game_of_life;
 };
 
 Application* CreateApplication() {
