@@ -1,6 +1,6 @@
 #include "dino.hpp"
 
-
+#include "platform.hpp"
 #include "base.hpp"
 #include "renderer.hpp"
 
@@ -72,7 +72,7 @@ void DinoGame::move_obstacles() {
 				continue;
 			}
 
-			if (!dino.is_dead && check_collision(dino.rect, o->rect)) {
+			if (!dino.is_dead && o->active && check_collision(dino.rect, o->rect)) {
 				dino_die();
 				return;
 			}
@@ -152,7 +152,7 @@ bool DinoGame::check_collision(Rect a, Rect b) {
 void DinoGame::dino_die() {
 	dino.is_dead = true;
 	dino.is_jumping = false;
-	dino_death_time = HAL_GetTick();
+	dino_death_time = Platform::get_tick();
 	//buzzer();
 }
 
@@ -174,7 +174,7 @@ void DinoGame::dino_jump() {
 }
 
 void DinoGame::on_ready() {
-	//srand(time(NULL));
+	srand(time(NULL));
 	init_obstacles();
 }
 
@@ -191,7 +191,7 @@ void DinoGame::on_update() {
 
 	// death animation & restart
 	if (dino.is_dead) {
-		uint32_t time_passed = HAL_GetTick() - dino_death_time;
+		uint32_t time_passed = Platform::get_tick() - dino_death_time;
 		if (time_passed > 1000 && !dead_dino_jumped) {
 			dino_jump();
 			dead_dino_jumped = true;
@@ -211,7 +211,7 @@ void DinoGame::on_event(Event event) {
 		}
 	
 	}
-	else if (event.type == Event::Type::Pressed) {
+	else if (event.type == Event::Type::Held) {
 		if (!dino.is_dead && dino.is_jumping) {
 			dino.jump_velocity -= 60 * DeltaTime;
 		}

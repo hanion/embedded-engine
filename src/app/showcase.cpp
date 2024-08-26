@@ -15,6 +15,7 @@ public:
 private:
 	CubeDemo cube_demo;
 	DinoGame dino_game;
+	Application* m_active_app = &dino_game;
 
 };
 
@@ -26,15 +27,15 @@ Application* CreateApplication() {
 
 
 void ShowcaseDemos::on_ready() {
-	cube_demo.on_ready();
+	m_active_app->on_ready();
 }
 
 void ShowcaseDemos::on_update() {
-	cube_demo.on_update();
+	m_active_app->on_update();
 }
 
 void ShowcaseDemos::on_event(Event event) {
-	cube_demo.on_event(event);
+	m_active_app->on_event(event);
 }
 
 
