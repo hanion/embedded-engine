@@ -18,7 +18,7 @@ void DisplayString::scroll_msg(Message* msg) {
 
 void DisplayString::on_ready() {
 	// NOTE: 10 fixes double x, but 8th rows are brighter
-	Renderer::RENDER_INTERVAL_MS = 10;
+	// Renderer::RENDER_INTERVAL_MS = 10;
 	TEARING_FIX = true;
 	for (uint8_t i = 0; i < MSG_COUNT; ++i) {
 		msgs[i].rect.width = Renderer::calculate_text_width(msgs[i].string, msgs[i].bold);

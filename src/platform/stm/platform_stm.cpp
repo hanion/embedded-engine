@@ -2,8 +2,20 @@
 #include "event.hpp"
 #include "platform.hpp"
 #include "engine.hpp"
+#include "base_stm.hpp"
+#include "renderer.hpp"
 #include "stm32f1xx_hal.h"
+#include "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+#include "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h"
+#include "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h"
+#include "stm32f1xx_hal_spi.h"
+#include <cstdint>
 
+
+extern "C" {
+extern void Error_Handler(void);
+extern void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+}
 
 
 SPI_HandleTypeDef hspi1;
@@ -61,6 +73,81 @@ void Platform::poll_events(Engine* engine) {
 
 
 
+bool TEARING_FIX = false;
+uint8_t current_row = 0;
+void Platform::render_row() {
+	for (uint8_t segment = 0; segment < 16; ++segment) {
+		for (int8_t block = 1; block >= 0; --block) {
+			for (uint8_t window = 0; window < 4; ++window) {
+				uint8_t x = segment*4 + window;
+				if (TEARING_FIX) {
+					x -= block;
+				}
+				uint8_t y = current_row + block*8;
+				Color data_area_1;
+				data_area_1.value = (*Renderer::front_buffer)[x][y];
+				Color data_area_2;
+				data_area_2.value = (*Renderer::front_buffer)[x][y + 16];
+
+				if(TEARING_FIX) {
+					if (x >= WIDTH) {
+						data_area_1 = 0;
+						data_area_2 = 0;
+					}
+				}
+
+
+				R1(data_area_1.r());
+				G1(data_area_1.g());
+				B1(data_area_1.b());
+
+				R2(data_area_2.r());
+				G2(data_area_2.g());
+				B2(data_area_2.b());
+
+				CLK_H;
+				CLK_L;
+			}
+		}
+	}
+
+	OE_TIMER_DISABLE;
+	LAT_H;
+	LAT_L;
+	ROW(current_row);
+	OE_TIMER_ENABLE;
+}
+
+
+// this is calculating the time between each display refresh
+// (time between rendering of 0th rows)
+// it does not account for the time it takes to render all rows
+// so it should be minimum time of 8 row rendering otherwise this is useless
+// FIX: this needs to be set to 10 for scrolling text to not be doubled
+uint8_t RENDER_INTERVAL_MS = 0;
+uint32_t last_render_time = 0;
+
+void Platform::render_buffer() {
+	if (current_row == 0) {
+		uint32_t tick = HAL_GetTick();
+		if (tick - last_render_time < RENDER_INTERVAL_MS) {
+			return;
+		} else {
+			last_render_time = tick;
+		}
+	}
+
+
+	render_row();
+
+	if (++current_row == 8) {
+		current_row = 0;
+		if (Renderer::is_back_buffer_new) {
+			Renderer::swap_buffers();
+			Renderer::is_back_buffer_new = false;
+		}
+	}
+}
 
 
 
@@ -317,21 +404,4 @@ void Error_Handler(void) {
 	}
 	/* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-	/* USER CODE BEGIN 6 */
-	/* User can add his own implementation to report the file name and line number,
-	 ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-	/* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
 

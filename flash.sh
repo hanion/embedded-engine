@@ -9,7 +9,7 @@ if [ ! -f "$PROGRAMMER_CLI" ]; then
     exit 1
 fi
 
-$PROGRAMMER_CLI -c port=$PORT --write $FIRMWARE_PATH > /dev/null
+$PROGRAMMER_CLI -c port=$PORT --write $FIRMWARE_PATH
 
 if [ $? -ne 0 ]; then
     echo "Error: Firmware flash failed."

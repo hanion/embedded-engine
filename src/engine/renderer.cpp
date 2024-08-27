@@ -1,13 +1,15 @@
 #include "renderer.hpp"
 
 
-#include<stdlib.h>
-#include<string.h>
+#include <stdlib.h>
+#include <string.h>
 
-static uint8_t buffer1[WIDTH][HEIGHT];
-static uint8_t buffer2[WIDTH][HEIGHT];
+uint8_t buffer1[WIDTH][HEIGHT];
+uint8_t buffer2[WIDTH][HEIGHT];
+
 uint8_t (*Renderer::front_buffer)[WIDTH][HEIGHT] = &buffer1;
 uint8_t (*Renderer::back_buffer)[WIDTH][HEIGHT] = &buffer2;
+
 bool Renderer::is_back_buffer_new = false;
 
 void Renderer::swap_buffers() {
@@ -18,6 +20,7 @@ void Renderer::swap_buffers() {
 
 
 void Renderer::clear_back_buffer(void) {
+	static_assert(sizeof(buffer1) == sizeof(buffer2));
 	memset((*back_buffer), 0, sizeof(buffer1));
 }
 
@@ -31,89 +34,13 @@ void Renderer::set_pixel(int x, int y, Color color) {
 
 
 
-bool TEARING_FIX = false;
-uint8_t current_row = 0;
-void Renderer::render_row() {
-	uint8_t r, g, b;
-	for (uint8_t segment = 0; segment < 16; ++segment) {
-		for (int8_t block = 1; block >= 0; --block) {
-			for (uint8_t window = 0; window < 4; ++window) {
-				uint8_t x = segment*4 + window;
-				if (TEARING_FIX) {
-					x -= block;
-				}
-				uint8_t y = current_row + block*8;
-				Color data_area_1;
-				data_area_1.value = (*front_buffer)[x][y];
-				Color data_area_2;
-				data_area_2.value = (*front_buffer)[x][y + 16];
-
-				if(TEARING_FIX) {
-					if (x >= WIDTH) {
-						data_area_1 = 0;
-						data_area_2 = 0;
-					}
-				}
-
-
-				R1(data_area_1.r());
-				G1(data_area_1.g());
-				B1(data_area_1.b());
-
-				R2(data_area_2.r());
-				G2(data_area_2.g());
-				B2(data_area_2.b());
-
-				CLK_H;
-				CLK_L;
-			}
-		}
-	}
-
-	OE_TIMER_DISABLE;
-	LAT_H;
-	LAT_L;
-	ROW(current_row);
-	OE_TIMER_ENABLE;
-}
-
-
-// this is calculating the time between each display refresh
-// (time between rendering of 0th rows)
-// it does not account for the time it takes to render all rows
-// so it should be minimum time of 8 row rendering otherwise this is useless
-// FIX: this needs to be set to 10 for scrolling text to not be doubled
-uint8_t Renderer::RENDER_INTERVAL_MS = 0;
-uint32_t Renderer::last_render_time = 0;
-
-void Renderer::render_buffer() {
-	if (current_row == 0) {
-		uint32_t tick = HAL_GetTick();
-		if (tick - last_render_time < RENDER_INTERVAL_MS) {
-			return;
-		} else {
-			last_render_time = tick;
-		}
-	}
-
-
-	render_row();
-
-	if (++current_row == 8) {
-		current_row = 0;
-		if (is_back_buffer_new) {
-			swap_buffers();
-			is_back_buffer_new = false;
-		}
-	}
-}
 
 // Bresenham's line algorithm
 // (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
 void Renderer::draw_line(int x0, int y0, int x1, int y1) {
-	draw_line_colored(x0, y0, x1, y1, {1});
+	draw_line(x0, y0, x1, y1, {1});
 }
-void Renderer::draw_line_colored(int x0, int y0, int x1, int y1, Color color) {
+void Renderer::draw_line(int x0, int y0, int x1, int y1, Color color) {
 	int dx = abs(x1 - x0);
 	int sx = (x0 < x1) ? 1 : -1;
 	int dy = -abs(y1 - y0);

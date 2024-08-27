@@ -70,8 +70,7 @@ void CubeDemo::draw_cube(Cube *cube) {
 	for (int i = 0; i < EDGE_COUNT; ++i) {
 		Vec4 a = transformed[cube->edges[i][0]];
 		Vec4 b = transformed[cube->edges[i][1]];
- 		//Renderer::draw_line(a.x, a.y, b.x, b.y);
-		Renderer::draw_line_colored(a.x, a.y, b.x, b.y, color);
+		Renderer::draw_line(a.x, a.y, b.x, b.y, color);
 		if (++color.value == 8) {
 			color.value = 1;
 		}

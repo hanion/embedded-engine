@@ -3,6 +3,7 @@
 #include "base.hpp"
 #include "event.hpp"
 #include "application.hpp"
+#include <cstdint>
 
 
 class Engine {

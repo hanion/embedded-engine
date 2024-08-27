@@ -20,7 +20,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "base.hpp"
+#include "base_stm.hpp"
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
