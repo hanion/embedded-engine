@@ -31,10 +31,10 @@ struct Color {
 	}
 
 	uint8_t r() {
-		return value & 0b100;
+		return (value & 0b100) >> 2;
 	}
 	uint8_t g() {
-		return value & 0b010;
+		return (value & 0b010) >> 1;
 	}
 	uint8_t b() {
 		return value & 0b001;
@@ -53,7 +53,6 @@ public:
 	static uint8_t (*front_buffer)[WIDTH][HEIGHT];
 	static uint8_t (*back_buffer)[WIDTH][HEIGHT];
 	static bool is_back_buffer_new;
-
 
 	static void swap_buffers(void);
 

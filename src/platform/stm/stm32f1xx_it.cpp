@@ -58,6 +58,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim2;
+extern UART_HandleTypeDef huart3;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -203,19 +204,18 @@ void SysTick_Handler(void)
 /**
   * @brief This function handles TIM2 global interrupt.
   */
-void TIM2_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM2_IRQn 0 */
-	// todo: disable tim2 at the start of this function, re enable at the end
-	// todo make something like OE_TIMER_DISABLE macro
+void TIM2_IRQHandler(void) {
 	Platform::render_buffer();
-  /* USER CODE END TIM2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim2);
-  /* USER CODE BEGIN TIM2_IRQn 1 */
-
-  /* USER CODE END TIM2_IRQn 1 */
+	HAL_TIM_IRQHandler(&htim2);
 }
 
-/* USER CODE BEGIN 1 */
+void USART3_IRQHandler(void) {
+	uint8_t received_data;
+	HAL_UART_Receive(&huart3, &received_data, 1, HAL_MAX_DELAY);
 
-/* USER CODE END 1 */
+	// TODO: Event:: register event, fire next on_event
+	Renderer::draw_number(received_data, 0, 0, false);
+
+	// resend: HAL_UART_Transmit(&huart3, &received_data, 1, HAL_MAX_DELAY);
+	HAL_UART_IRQHandler(&huart3);
+}

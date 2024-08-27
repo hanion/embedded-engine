@@ -5,10 +5,9 @@
 #include "base_stm.hpp"
 #include "renderer.hpp"
 #include "stm32f1xx_hal.h"
-#include "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
-#include "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h"
-#include "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h"
+#include "stm32f1xx_hal_gpio.h"
 #include "stm32f1xx_hal_spi.h"
+#include "stm32f1xx_hal_uart.h"
 #include <cstdint>
 
 
@@ -23,11 +22,14 @@ SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
+UART_HandleTypeDef huart3;
+
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
+void MX_USART3_UART_Init();
 
 
 uint32_t Platform::get_tick() {
@@ -39,10 +41,12 @@ void Platform::on_init() {
 	HAL_Init();
 	SystemClock_Config();
 
+
 	MX_GPIO_Init();
 	MX_SPI1_Init();
 	MX_TIM2_Init();
 	MX_TIM3_Init();
+	MX_USART3_UART_Init();
 
 	HAL_TIM_Base_Start_IT(&htim2);
 	HAL_TIM_Base_Start_IT(&htim3);
@@ -157,14 +161,49 @@ void Platform::render_buffer() {
 
 
 
+void MX_USART3_UART_Init(void) {
+	__HAL_RCC_USART3_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+	// Configure UART TX (PB10) and RX (PB11)
+	GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	huart3.Instance = USART3;
+	huart3.Init.BaudRate = 115200;
+	huart3.Init.WordLength = UART_WORDLENGTH_8B;
+	huart3.Init.StopBits = UART_STOPBITS_1;
+	huart3.Init.Parity = UART_PARITY_NONE;
+	huart3.Init.Mode = UART_MODE_TX_RX;
+	huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+	if (HAL_UART_Init(&huart3) != HAL_OK) {
+		Error_Handler();
+	}
+
+	__HAL_UART_ENABLE_IT(&huart3, UART_IT_RXNE);
+}
 
 
 
 
 
 
-void SystemClock_Config(void)
-{
+
+
+
+
+
+
+
+
+
+void SystemClock_Config(void) {
 	RCC_OscInitTypeDef RCC_OscInitStruct = {0};
 	RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
@@ -191,8 +230,7 @@ void SystemClock_Config(void)
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
 	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-	{
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
 		Error_Handler();
 	}
 }

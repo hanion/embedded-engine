@@ -1,29 +1,38 @@
 CompileFlags:
-  CompilationDatabase: "build"
+  CompilationDatabase: "build_stm"
   Add: [
     -Wno-unused-include,
+    -I/usr/include, 
     -I/usr/include/x86_64-linux-gnu, # GCC-specific headers
     -I/usr/include/c++/14.1.1/, 
     -I/usr/include/c++/14.1.1/x86_64-pc-linux-gnu/, 
 
     -I../engine,
     -I../app,
+    -I../../engine,
+    -I../../app,
 
     -I../platform/stm,
-    -I../platform/stm/Drivers/,
+    -I../platform/stm/Drivers,
     -I../platform/stm/Drivers/STM32F1xx_HAL_Driver/Src,
     -I../platform/stm/Drivers/STM32F1xx_HAL_Driver/Inc,
     -I../platform/stm/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy,
-    -I../platform/stm/Drivers/CMSIS/Device/ST/STM32F1xx/Include/,
+    -I../platform/stm/Drivers/CMSIS/Device/ST/STM32F1xx/Include,
     -I../platform/stm/Drivers/CMSIS/Include,
+    -I./,
+    -I../,
+    -I../../../../../platform/stm,
+    -I./Drivers,
+    -I./Drivers/STM32F1xx_HAL_Driver/Src,
+    -I./Drivers/STM32F1xx_HAL_Driver/Inc,
+    -I./Drivers/STM32F1xx_HAL_Driver/Inc/Legacy,
+    -I./Drivers/CMSIS/Device/ST/STM32F1xx/Include,
+    -I./Drivers/CMSIS/Include,
 
     -I../platform/sim,
 
-    --include-directory=/usr/include, 
-
-    -Wno-unused-include,
   ]
-  Compiler: gcc
+  Compiler: g++
 Diagnostics:
   UnusedIncludes: None
   Suppress:
