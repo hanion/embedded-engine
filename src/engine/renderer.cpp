@@ -1,4 +1,5 @@
 #include "renderer.hpp"
+#include "base.hpp"
 
 
 #include <stdlib.h>
@@ -41,6 +42,12 @@ void Renderer::draw_line(int x0, int y0, int x1, int y1) {
 	draw_line(x0, y0, x1, y1, {1});
 }
 void Renderer::draw_line(int x0, int y0, int x1, int y1, Color color) {
+	if ((x0 < 0 && x1 < 0) || (x0 > WIDTH && x1 > WIDTH) ||
+		(y0 < 0 && y1 < 0) || (y0 > HEIGHT && y1 > HEIGHT)) {
+		return;
+	}
+
+
 	int dx = abs(x1 - x0);
 	int sx = (x0 < x1) ? 1 : -1;
 	int dy = -abs(y1 - y0);

@@ -72,7 +72,7 @@ void CubeDemo::draw_cube(Cube *cube) {
 		vertex_valid[i] = true;
 
 		// depth culling
-		if (transformed[i].z <= -1.0f || transformed[i].w <= -1.0f) {
+		if (transformed[i].z <= -1.0f || transformed[i].w < 0.0f) {
 			vertex_valid[i] = false;
 			continue;
 		}
@@ -80,11 +80,11 @@ void CubeDemo::draw_cube(Cube *cube) {
 
 	Color color = 1;
 	for (int i = 0; i < EDGE_COUNT; ++i) {
-		Vec4 a = transformed[cube->edges[i][0]];
-		Vec4 b = transformed[cube->edges[i][1]];
 		if (!vertex_valid[cube->edges[i][0]] || !vertex_valid[cube->edges[i][1]]) {
 			continue;
 		}
+		Vec4 a = transformed[cube->edges[i][0]];
+		Vec4 b = transformed[cube->edges[i][1]];
 
 		Renderer::draw_line(a.x, a.y, b.x, b.y, color);
 		if (++color.value == 8) {
