@@ -20,7 +20,7 @@ void Renderer::swap_buffers() {
 
 
 void Renderer::clear_back_buffer(void) {
-	static_assert(sizeof(buffer1) == sizeof(buffer2));
+	static_assert(sizeof(buffer1) == sizeof(buffer2), "");
 	memset((*back_buffer), 0, sizeof(buffer1));
 }
 

@@ -27,6 +27,8 @@ public:
 	static Vec4 mat4_mul_vec4(const Mat4 *m, const Vec4 *v);
 
 	static Mat4 calculate_transform_matrix(const Transform *transform);
+	static Mat4 calculate_view_matrix(const Transform *transform);
+
 
 	static Mat4 mat4_make_perspective(float fov, float aspect, float znear, float zfar);
 	static Vec4 mat4_mul_vec4_project(Mat4* mat_proj, Vec4* v);

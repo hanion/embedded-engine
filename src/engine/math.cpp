@@ -125,3 +125,20 @@ Mat4 Math::calculate_transform_matrix(const Transform *transform) {
 	return transform_matrix;
 }
 
+
+
+Mat4 Math::calculate_view_matrix(const Transform *transform) {
+	Mat4 rotation_x = get_rotation_matrix_x(-transform->rot_x);
+	Mat4 rotation_y = get_rotation_matrix_y(-transform->rot_y);
+	Mat4 rotation_z = get_rotation_matrix_z(-transform->rot_z);
+
+	Mat4 rotation_combined = mat4_mul_mat4(&rotation_x, &rotation_y);
+	rotation_combined = mat4_mul_mat4(&rotation_combined, &rotation_z);
+
+	Mat4 inverse_translation = get_translation_matrix(-transform->x, -transform->y, -transform->z);
+
+	Mat4 view_matrix = mat4_mul_mat4(&rotation_combined, &inverse_translation);
+
+	return view_matrix;
+}
+

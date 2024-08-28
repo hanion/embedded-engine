@@ -28,7 +28,12 @@ public:
 private:
 	void draw_cube(Cube* cube);
 
+	void recalculate_view_projection();
+
+	Transform m_camera = {0};
+
 	Mat4 m_view_projection_matrix;
+	Mat4 perspective_projection;
 
 	float m_speed = 0.01;
 	int m_level = 2;
