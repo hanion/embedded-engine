@@ -66,10 +66,10 @@ public:
 	static void draw_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, Color color);
 	static void draw_Rect(Rect rect, Color color);
 
-	static void draw_number(int num, int x, int y, bool bold);
-	static void draw_text(const char *text, int x, int y, bool bold);
-	static const int calculate_text_width(const char* text, bool bold);
-	static const int calculate_number_width(int number, bool bold);
+	static void draw_number(int num, int x, int y, bool bold = false);
+	static void draw_text(const char *text, int x, int y, bool bold = false);
+	static const int calculate_text_width(const char* text, bool bold = false);
+	static const int calculate_number_width(int number, bool bold = false);
 
 
 };

@@ -2,6 +2,7 @@
 
 
 #include <stdbool.h>
+#include <cstdint>
 
 #define WIDTH 64
 #define HEIGHT 32

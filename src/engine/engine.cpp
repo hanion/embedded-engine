@@ -17,6 +17,9 @@ void Engine::run() {
 			accumulator -= m_update_interval_ms;
 
 			Platform::poll_events(this);
+			EventManager::enqueue_active_events();
+			EventManager::send_events_in_queue(this);
+
 			if (!Renderer::is_back_buffer_new){
 				m_application.on_update();
 				Renderer::is_back_buffer_new = true;

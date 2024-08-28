@@ -24,6 +24,7 @@
 #include "renderer.hpp"
 #include "base_stm.hpp"
 #include "platform.hpp"
+#include "event.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -209,13 +210,41 @@ void TIM2_IRQHandler(void) {
 	HAL_TIM_IRQHandler(&htim2);
 }
 
+void process_received_data(uint8_t data);
+
 void USART3_IRQHandler(void) {
 	uint8_t received_data;
 	HAL_UART_Receive(&huart3, &received_data, 1, HAL_MAX_DELAY);
 
-	// TODO: Event:: register event, fire next on_event
-	Renderer::draw_number(received_data, 0, 0, false);
+	process_received_data(received_data);
 
-	// resend: HAL_UART_Transmit(&huart3, &received_data, 1, HAL_MAX_DELAY);
 	HAL_UART_IRQHandler(&huart3);
 }
+
+
+uint8_t byte_count = 0;
+uint8_t pressed = 0;
+uint8_t key_code = 0;
+void process_received_data(uint8_t data) {
+	if (byte_count == 0) {
+		pressed = data;
+		byte_count++;
+		return;
+	}
+
+	key_code = data;
+
+	if (pressed) {
+		EventManager::activate_key(key_code);
+	} else {
+		EventManager::deactivate_key(key_code);
+	}
+
+	pressed = 0;
+	key_code = 0;
+	byte_count = 0;
+}
+
+
+
+

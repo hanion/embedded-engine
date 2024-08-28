@@ -1,12 +1,37 @@
 #pragma once
+#include <cstdint>
+#include <vector>
+
+#define EVENT_QUEUE_MAX 32
 
 struct Event {
 	enum class Type {
-		Pressed, Held, Released
+		NONE, Pressed, Held, Released
 	};
 
 	Type type;
-	int key_id;
+	int keycode;
 
-	Event(Type type, int key_id) : type(type), key_id(key_id) {}
+	Event() : type(Type::NONE), keycode(-1) {}
+	Event(Type type, int keycode) : type(type), keycode(keycode) {}
+};
+
+
+
+
+class EventManager {
+public:
+	static void enqueue_active_events();
+	static void send_events_in_queue(class Engine* engine);
+	static void enqueue_event(Event event);
+
+	// creates a pressed event, will repeat held events until deactivated
+	static void activate_key(int keycode);
+	static void deactivate_key(int keycode);
+
+private:
+	static Event event_queue[EVENT_QUEUE_MAX];
+	static uint8_t enqueued_event_count;
+
+	static std::vector<int> active_keys;
 };

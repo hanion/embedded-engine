@@ -63,14 +63,14 @@ void Platform::poll_events(Engine* engine) {
 	if ((HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) == GPIO_PIN_RESET)) {
 		if (!is_button_held) {
 			is_button_held = 1;
-			engine->on_event({Event::Type::Pressed, 0});
+			EventManager::enqueue_event({Event::Type::Pressed, 0});
 		} else {
-			engine->on_event({Event::Type::Held, 0});
+			EventManager::enqueue_event({Event::Type::Held, 0});
 		}
 	} else {
 		if (is_button_held) {
 			is_button_held = 0;
-			engine->on_event({Event::Type::Released, 0});
+			EventManager::enqueue_event({Event::Type::Released, 0});
 		}
 	}
 }
