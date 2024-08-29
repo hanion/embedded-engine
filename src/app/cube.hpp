@@ -30,7 +30,11 @@ private:
 
 	void recalculate_view_projection();
 
-	Transform m_camera = {0};
+	Transform m_camera = {
+		.x = 0, .y = 0, .z = -15,
+		.rot_x = 0, .rot_y = 0, .rot_z = 0,
+		.scale_x = 1, .scale_y = 1, .scale_z = 1,
+	};
 
 	Mat4 m_view_projection_matrix;
 	Mat4 perspective_projection;

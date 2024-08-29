@@ -71,6 +71,7 @@ public:
 	static const int calculate_text_width(const char* text, bool bold = false);
 	static const int calculate_number_width(int number, bool bold = false);
 
+	static void draw_mesh(struct Mesh* mesh, Transform& transform, Mat4 view_projection_matrix);
 
 };
 

@@ -1,8 +1,41 @@
 #include "cube.hpp"
+#include "mesh.hpp"
 #include "renderer.hpp"
 #include <math.h>
 
 
+Mesh cube_mesh = Mesh(
+	{
+		{-1, -1,  1}, // 0
+		{ 1, -1,  1}, // 1
+		{-1,  1,  1}, // 2
+		{ 1,  1,  1}, // 3
+		{-1, -1, -1}, // 4
+		{ 1, -1, -1}, // 5
+		{-1,  1, -1}, // 6
+		{ 1,  1, -1}  // 7
+	},
+	{
+		// Front face (Red)
+		{{0, 1, 2}, Color{1, 0, 0}},
+		{{1, 3, 2}, Color{1, 0, 0}},
+		// Back face (Green)
+		{{4, 6, 5}, Color{0, 1, 0}},
+		{{5, 6, 7}, Color{0, 1, 0}},
+		// Bottom face (Blue)
+		{{0, 4, 1}, Color{0, 0, 1}},
+		{{1, 4, 5}, Color{0, 0, 1}},
+		// Top face (Yellow)
+		{{2, 3, 6}, Color{1, 1, 0}},
+		{{3, 7, 6}, Color{1, 1, 0}},
+		// Left face (Magenta)
+		{{0, 2, 4}, Color{1, 0, 1}},
+		{{2, 6, 4}, Color{1, 0, 1}},
+		// Right face (Cyan)
+		{{1, 5, 3}, Color{0, 1, 1}},
+		{{3, 5, 7}, Color{0, 1, 1}}
+	}
+);
 
 
 
@@ -31,7 +64,7 @@ Cube cube0 = {
 
 
 Cube pyramid0 = {
-    .p = {
+	.p = {
 		{-1,  1, -1}, // 0 left  front
 		{ 1,  1, -1}, // 1 right front
 		{-1,  1,  1}, // 2 left  back
@@ -41,12 +74,12 @@ Cube pyramid0 = {
 		{ 0, -1,  0},
 		{ 0, -1,  0},
 	},
-    .edges = {
-        {0, 1}, {0, 2}, {3, 2}, {3, 1},
-        {4, 0}, {4, 1}, {4, 2}, {4, 3},
-        {4, 0}, {4, 1}, {4, 2}, {4, 3}
-    },
-    .transform = { 6,0,0, 0,0,0, 3,3,3 }
+	.edges = {
+		{0, 1}, {0, 2}, {3, 2}, {3, 1},
+		{4, 0}, {4, 1}, {4, 2}, {4, 3},
+		{4, 0}, {4, 1}, {4, 2}, {4, 3}
+	},
+	.transform = { 6,0,0, 0,0,0, 3,3,3 }
 };
 
 
@@ -100,13 +133,7 @@ void CubeDemo::recalculate_view_projection() {
 }
 
 void CubeDemo::on_ready() {
-	perspective_projection = Math::mat4_make_perspective(4.0 * (M_PI / 180.0), 1, 1.0, 100.0);
-	m_camera.scale_x = 1;
-	m_camera.scale_y = 1;
-	m_camera.scale_z = 1;
-	m_camera.x = 0;
-	m_camera.y = 0;
-	m_camera.z = -15;
+	perspective_projection = Math::mat4_make_perspective(3.5 * (M_PI / 180.0), 1, 1.0, 100.0);
 	recalculate_view_projection();
 }
 
@@ -122,7 +149,9 @@ void CubeDemo::on_update() {
 	pyramid0.transform.rot_x += m_speed * m_level;
 	pyramid0.transform.rot_y += m_speed * m_level;
 	pyramid0.transform.rot_z += m_speed * m_level;
-	draw_cube(&pyramid0);
+// 	draw_cube(&pyramid0);
+
+	Renderer::draw_mesh(&cube_mesh, pyramid0.transform, m_view_projection_matrix);
 }
 
 

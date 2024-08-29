@@ -1,7 +1,10 @@
 #include "renderer.hpp"
+#include "mesh.hpp"
 #include "base.hpp"
 
 
+#include <algorithm>
+#include <cmath>
 #include <stdlib.h>
 #include <string.h>
 
@@ -55,7 +58,9 @@ void Renderer::draw_line(int x0, int y0, int x1, int y1, Color color) {
 	int error = dx + dy;
 
 	while (1) {
-		set_pixel(x0, y0, color);
+		if (x0 >= 0 && x0 < WIDTH && y0 >= 0 && y0 < HEIGHT) {
+			set_pixel(x0, y0, color);
+		}
 
 		if (x0 == x1 && y0 == y1) {
 			break;
@@ -305,6 +310,53 @@ const int Renderer::calculate_number_width(int number, bool bold) {
 	}
 	return width > 0 ? width - 1 : 0;
 }
+
+
+
+void Renderer::draw_mesh(Mesh* mesh, Transform& transform, Mat4 view_projection_matrix) {
+	Mat4 transform_matrix = Math::calculate_transform_matrix(&transform);
+	Mat4 transform_proj_matrix = Math::mat4_mul_mat4(&view_projection_matrix, &transform_matrix);
+
+	std::vector<Vec4> transformed(mesh->vertices.size());
+	std::vector<bool> vertex_valid(mesh->vertices.size(), true);
+
+	for (int i = 0; i < mesh->vertices.size(); ++i) {
+		Vec4 model_space = { mesh->vertices[i].x, mesh->vertices[i].y, mesh->vertices[i].z, 1.0f };
+
+		transformed[i] = Math::mat4_mul_vec4_project(&transform_proj_matrix, &model_space);
+
+		// center
+		transformed[i].x += (float)WIDTH/2.0;
+		transformed[i].y += (float)HEIGHT/2.0;
+		// flip y
+		transformed[i].y = (float)HEIGHT - transformed[i].y;
+		
+		vertex_valid[i] = true;
+
+		// depth culling
+		if (transformed[i].z <= -1.0f || transformed[i].w < 0.0f) {
+			vertex_valid[i] = false;
+			continue;
+		}
+	}
+
+	for (const auto& face : mesh->faces) {
+		if (std::any_of(face.indices, face.indices + 3, [&](Index i) { return !vertex_valid[i]; })) {
+			continue;
+		}
+
+		for (size_t i = 0; i < 3; ++i) {
+			const Index& current = face.indices[i];
+			const Index& next = face.indices[(i + 1) % 3];
+
+			const Vec4& a = transformed[current];
+			const Vec4& b = transformed[next];
+
+			Renderer::draw_line(a.x, a.y, b.x, b.y, face.color);
+		}
+	}
+}
+
 
 
 
