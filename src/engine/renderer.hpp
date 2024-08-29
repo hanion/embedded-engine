@@ -2,6 +2,7 @@
 
 #include "base.hpp"
 #include "math.hpp"
+#include "mesh.hpp"
 #include <stdint.h>
 
 
@@ -12,35 +13,6 @@ typedef struct {
 	int32_t width, height;
 } Rect;
 
-
-struct Color {
-	uint8_t value;
-
-	Color (uint8_t rgb = 0) {
-		set(rgb,rgb,rgb);
-	}
-	Color(uint8_t r, uint8_t g, uint8_t b) {
-		set(r,g,b);
-	}
-
-	void set(uint8_t r, uint8_t g, uint8_t b) {
-		r = r ? 1 : 0;
-		g = g ? 1 : 0;
-		b = b ? 1 : 0;
-		value = (r << 2) | (g << 1) | b;
-	}
-
-	uint8_t r() {
-		return (value & 0b100) >> 2;
-	}
-	uint8_t g() {
-		return (value & 0b010) >> 1;
-	}
-	uint8_t b() {
-		return value & 0b001;
-	}
-
-};
 
 typedef struct {
 	uint8_t x, y;
@@ -71,8 +43,9 @@ public:
 	static const int calculate_text_width(const char* text, bool bold = false);
 	static const int calculate_number_width(int number, bool bold = false);
 
-	static void draw_mesh(struct Mesh* mesh, Transform& transform, Mat4 view_projection_matrix);
-
+	static void draw_mesh(const Mesh& mesh, const Transform& transform, const Mat4& view_projection_matrix);
+	inline static Vec3 calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2);
+	inline static Vec3 calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2, const Vec3& v3);
 };
 
 

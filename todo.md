@@ -4,14 +4,14 @@
 
 ## queue ##
 
- - fill polygon function
+ - camera class
+
+ - fps controller
 
 ---
 
 ##### maybe #####
 
  - create a depth buffer
-
- - fill polygons in the depth buffer, with fill_polygon
 
 

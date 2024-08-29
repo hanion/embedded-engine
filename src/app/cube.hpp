@@ -26,8 +26,6 @@ public:
 	virtual void on_event(Event event) override final;
 
 private:
-	void draw_cube(Cube* cube);
-
 	void recalculate_view_projection();
 
 	Transform m_camera = {

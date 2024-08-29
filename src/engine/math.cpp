@@ -3,7 +3,47 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <utility>
 
+
+Vec3 Vec3::operator+(const Vec3& rhs) const {
+	return Vec3{
+		x + rhs.x,
+		y + rhs.y,
+		z + rhs.z
+	};
+}
+Vec3 Vec3::operator-(const Vec3& rhs) const {
+	return Vec3{
+		x - rhs.x,
+		y - rhs.y,
+		z - rhs.z
+	};
+}
+Vec3 Vec3::operator/(float value) const {
+	return Vec3{
+		x / value,
+		y / value,
+		z / value
+	};
+}
+
+Vec4 Vec4::operator+(const Vec4& rhs) const {
+	return Vec4{
+		x + rhs.x,
+		y + rhs.y,
+		z + rhs.z,
+		w + rhs.w
+	};
+}
+Vec4 Vec4::operator/(float value) const {
+	return Vec4{
+		x / value,
+		y / value,
+		z / value,
+		w / value
+	};
+}
 
 
 
@@ -140,5 +180,32 @@ Mat4 Math::calculate_view_matrix(const Transform *transform) {
 	Mat4 view_matrix = mat4_mul_mat4(&rotation_combined, &inverse_translation);
 
 	return view_matrix;
+}
+
+
+
+
+
+Vec3 Math::normalize(const Vec3& v) {
+	float length = std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+
+	if (length == 0) {
+		return {0, 0, 0};
+	}
+
+	return {v.x / length, v.y / length, v.z / length};
+}
+
+
+Vec3 Math::cross(const Vec3& a, const Vec3& b) {
+	Vec3 result;
+	result.x = a.y * b.z - a.z * b.y;
+	result.y = a.z * b.x - a.x * b.z;
+	result.z = a.x * b.y - a.y * b.x;
+	return result;
+}
+
+float Math::dot(const Vec3& a, const Vec3& b) {
+	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 

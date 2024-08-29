@@ -5,8 +5,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 uint8_t buffer1[WIDTH][HEIGHT];
 uint8_t buffer2[WIDTH][HEIGHT];
@@ -313,50 +315,83 @@ const int Renderer::calculate_number_width(int number, bool bold) {
 
 
 
-void Renderer::draw_mesh(Mesh* mesh, Transform& transform, Mat4 view_projection_matrix) {
+
+
+
+void Renderer::draw_mesh(const Mesh& mesh, const Transform& transform, const Mat4& view_projection_matrix) {
 	Mat4 transform_matrix = Math::calculate_transform_matrix(&transform);
 	Mat4 transform_proj_matrix = Math::mat4_mul_mat4(&view_projection_matrix, &transform_matrix);
 
-	std::vector<Vec4> transformed(mesh->vertices.size());
-	std::vector<bool> vertex_valid(mesh->vertices.size(), true);
+	std::vector<Vec4> transformed_vertices(mesh.vertices.size());
+	std::vector<bool> vertex_valid(mesh.vertices.size(), true);
 
-	for (int i = 0; i < mesh->vertices.size(); ++i) {
-		Vec4 model_space = { mesh->vertices[i].x, mesh->vertices[i].y, mesh->vertices[i].z, 1.0f };
+	for (int i = 0; i < mesh.vertices.size(); ++i) {
+		Vec4 model_space = { mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z, 1.0f };
 
-		transformed[i] = Math::mat4_mul_vec4_project(&transform_proj_matrix, &model_space);
+		transformed_vertices[i] = Math::mat4_mul_vec4_project(&transform_proj_matrix, &model_space);
 
 		// center
-		transformed[i].x += (float)WIDTH/2.0;
-		transformed[i].y += (float)HEIGHT/2.0;
+		transformed_vertices[i].x += (float)WIDTH/2.0;
+		transformed_vertices[i].y += (float)HEIGHT/2.0;
 		// flip y
-		transformed[i].y = (float)HEIGHT - transformed[i].y;
+		transformed_vertices[i].y = (float)HEIGHT - transformed_vertices[i].y;
 		
-		vertex_valid[i] = true;
-
 		// depth culling
-		if (transformed[i].z <= -1.0f || transformed[i].w < 0.0f) {
+		if (transformed_vertices[i].z <= -1.0f || transformed_vertices[i].w < 0.0f) {
 			vertex_valid[i] = false;
 			continue;
 		}
 	}
 
-	for (const auto& face : mesh->faces) {
-		if (std::any_of(face.indices, face.indices + 3, [&](Index i) { return !vertex_valid[i]; })) {
+	for (const Face& face : mesh.faces) {
+		if (std::any_of(face.indices, face.indices + 4, [&](Index i) { return !vertex_valid[i]; })) {
 			continue;
 		}
 
-		for (size_t i = 0; i < 3; ++i) {
-			const Index& current = face.indices[i];
-			const Index& next = face.indices[(i + 1) % 3];
+		Vec4 v0 = transformed_vertices[face.indices[0]];
+		Vec4 v1 = transformed_vertices[face.indices[1]];
+		Vec4 v2 = transformed_vertices[face.indices[2]];
+		Vec4 v3 = transformed_vertices[face.indices[3]];
 
-			const Vec4& a = transformed[current];
-			const Vec4& b = transformed[next];
+		Vec4 face_centroid = (v0 + v1 + v2 + v3) / 4.0f;
+		Vec3 view_dir = { -face_centroid.x, -face_centroid.y, -face_centroid.z };
+
+		Vec3 face_normal = calculate_face_normal(v0.vec3(),v1.vec3(),v2.vec3());
+		//Vec3 face_normal = calculate_face_normal(v0.vec3(),v1.vec3(),v2.vec3(),v3.vec3());
+
+		float dot_product = Math::dot(view_dir, face_normal);
+
+		// backface culling
+		if (dot_product > 0) {
+			continue;
+		}
+
+		for (size_t i = 0; i < 4; ++i) {
+			const Index& current = face.indices[i];
+			const Index& next = face.indices[(i + 1) % 4];
+
+			const Vec4& a = transformed_vertices[current];
+			const Vec4& b = transformed_vertices[next];
 
 			Renderer::draw_line(a.x, a.y, b.x, b.y, face.color);
 		}
 	}
 }
 
+Vec3 Renderer::calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2) {
+    Vec3 edge1 = v1 - v0;
+    Vec3 edge2 = v2 - v0;
+    return Math::normalize(Math::cross(edge1, edge2));
+}
 
+Vec3 Renderer::calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2, const Vec3& v3) {
+	Vec3 edge1 = v1 - v0;
+	Vec3 edge2 = v2 - v0;
+	Vec3 edge3 = v3 - v0;
 
+	Vec3 normal1 = Math::normalize(Math::cross(edge1, edge2));
+	Vec3 normal2 = Math::normalize(Math::cross(edge2, edge3));
+
+	return Math::normalize(normal1 + normal2);
+}
 
