@@ -318,9 +318,9 @@ const int Renderer::calculate_number_width(int number, bool bold) {
 
 
 
-void Renderer::draw_mesh(const Mesh& mesh, const Transform& transform, const Mat4& view_projection_matrix) {
+void Renderer::draw_mesh(const Mesh& mesh, const Transform& transform, const Camera& camera) {
 	Mat4 transform_matrix = Math::calculate_transform_matrix(&transform);
-	Mat4 transform_proj_matrix = Math::mat4_mul_mat4(&view_projection_matrix, &transform_matrix);
+	Mat4 transform_proj_matrix = Math::mat4_mul_mat4(&camera.view_projection_matrix, &transform_matrix);
 
 	std::vector<Vec4> transformed_vertices(mesh.vertices.size());
 	std::vector<bool> vertex_valid(mesh.vertices.size(), true);

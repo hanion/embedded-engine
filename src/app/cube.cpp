@@ -17,14 +17,7 @@ Transform model1 = {
 };
 
 
-void CubeDemo::recalculate_view_projection() {
-	Mat4 view_matrix = Math::calculate_view_matrix(&m_camera);
-	m_view_projection_matrix = Math::mat4_mul_mat4(&perspective_projection, &view_matrix);
-}
-
 void CubeDemo::on_ready() {
-	perspective_projection = Math::mat4_make_perspective(3.5 * (M_PI / 180.0), 1, 1.0, 100.0);
-	recalculate_view_projection();
 }
 
 
@@ -33,14 +26,14 @@ void CubeDemo::on_update() {
 	model0.rot_x += m_speed * m_level;
 	model0.rot_y += m_speed * m_level;
 	model0.rot_z += m_speed * m_level;
-	Renderer::draw_mesh(formatted_model, model0, m_view_projection_matrix);
+	Renderer::draw_mesh(formatted_model, model0, m_camera);
 
 
 	model1.rot_x += m_speed * m_level;
 	model1.rot_y += m_speed * m_level;
 	model1.rot_z += m_speed * m_level;
 	
-	Renderer::draw_mesh(cube_mesh, model1, m_view_projection_matrix);
+	Renderer::draw_mesh(cube_mesh, model1, m_camera);
 }
 
 
@@ -66,36 +59,40 @@ void CubeDemo::on_event(Event event) {
 
 	switch (event.keycode) {
 		case 'w':
-			m_camera.z += speed;
-			recalculate_view_projection();
+			m_camera.move_z(speed);
 			break;
 		case 's':
-			m_camera.z -= speed;
-			recalculate_view_projection();
+			m_camera.move_z(-speed);
 			break;
 		case 'a':
-			m_camera.x -= speed;
-			recalculate_view_projection();
+			m_camera.move_x(-speed);
 			break;
 		case 'd':
-			m_camera.x += speed;
-			recalculate_view_projection();
+			m_camera.move_x(speed);
+			break;
+		case 'e':
+			m_camera.move_y(speed);
+			break;
+		case 'q':
+			m_camera.move_y(-speed);
 			break;
 		case 'i':
-			m_camera.rot_x -= rotation_speed;
-			recalculate_view_projection();
+			m_camera.rotate_x(-rotation_speed);
 			break;
 		case 'k':
-			m_camera.rot_x += rotation_speed;
-			recalculate_view_projection();
+			m_camera.rotate_x(rotation_speed);
 			break;
 		case 'j':
-			m_camera.rot_y -= rotation_speed;
-			recalculate_view_projection();
+			m_camera.rotate_y(-rotation_speed);
 			break;
 		case 'l':
-			m_camera.rot_y += rotation_speed;
-			recalculate_view_projection();
+			m_camera.rotate_y(rotation_speed);
+			break;
+		case 'z':
+			m_camera.zoom(speed/5.0f);
+			break;
+		case 'x':
+			m_camera.zoom(-speed/5.0f);
 			break;
 		default:
 			break;

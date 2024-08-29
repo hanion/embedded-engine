@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base.hpp"
+#include "camera.hpp"
 #include "math.hpp"
 #include "mesh.hpp"
 #include <stdint.h>
@@ -43,7 +44,7 @@ public:
 	static const int calculate_text_width(const char* text, bool bold = false);
 	static const int calculate_number_width(int number, bool bold = false);
 
-	static void draw_mesh(const Mesh& mesh, const Transform& transform, const Mat4& view_projection_matrix);
+	static void draw_mesh(const Mesh& mesh, const Transform& transform, const Camera& camera);
 	inline static Vec3 calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2);
 	inline static Vec3 calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2, const Vec3& v3);
 };
