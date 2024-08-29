@@ -5,49 +5,9 @@
 #include <string.h>
 #include <utility>
 
+namespace Math {
 
-Vec3 Vec3::operator+(const Vec3& rhs) const {
-	return Vec3{
-		x + rhs.x,
-		y + rhs.y,
-		z + rhs.z
-	};
-}
-Vec3 Vec3::operator-(const Vec3& rhs) const {
-	return Vec3{
-		x - rhs.x,
-		y - rhs.y,
-		z - rhs.z
-	};
-}
-Vec3 Vec3::operator/(float value) const {
-	return Vec3{
-		x / value,
-		y / value,
-		z / value
-	};
-}
-
-Vec4 Vec4::operator+(const Vec4& rhs) const {
-	return Vec4{
-		x + rhs.x,
-		y + rhs.y,
-		z + rhs.z,
-		w + rhs.w
-	};
-}
-Vec4 Vec4::operator/(float value) const {
-	return Vec4{
-		x / value,
-		y / value,
-		z / value,
-		w / value
-	};
-}
-
-
-
-Mat4 Math::mat4_mul_mat4(const Mat4 *a, const Mat4 *b) {
+Mat4 mat4_mul_mat4(const Mat4 *a, const Mat4 *b) {
 	Mat4 result;
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
@@ -60,7 +20,7 @@ Mat4 Math::mat4_mul_mat4(const Mat4 *a, const Mat4 *b) {
 	return result;
 }
 
-Vec4 Math::mat4_mul_vec4(const Mat4 *m, const Vec4 *v) {
+Vec4 mat4_mul_vec4(const Mat4 *m, const Vec4 *v) {
 	Vec4 result;
 	result.x = m->m[0][0] * v->x + m->m[0][1] * v->y + m->m[0][2] * v->z + m->m[0][3] * v->w;
 	result.y = m->m[1][0] * v->x + m->m[1][1] * v->y + m->m[1][2] * v->z + m->m[1][3] * v->w;
@@ -69,7 +29,7 @@ Vec4 Math::mat4_mul_vec4(const Mat4 *m, const Vec4 *v) {
 	return result;
 }
 
-Mat4 Math::mat4_make_perspective(float fov, float aspect, float znear, float zfar) {
+Mat4 mat4_make_perspective(float fov, float aspect, float znear, float zfar) {
 	Mat4 m = {{{0}}};
 	m.m[0][0] = aspect * (1 / tan(fov/2));
 	m.m[1][1] = 1 / tan(fov/2);
@@ -79,7 +39,7 @@ Mat4 Math::mat4_make_perspective(float fov, float aspect, float znear, float zfa
 	return m;
 }
 
-Vec4 Math::mat4_mul_vec4_project(Mat4* mat_proj, Vec4* v) {
+Vec4 mat4_mul_vec4_project(Mat4* mat_proj, Vec4* v) {
 	Vec4 result = mat4_mul_vec4(mat_proj, v);
 
 	if (result.w != 0.0) {
@@ -93,7 +53,7 @@ Vec4 Math::mat4_mul_vec4_project(Mat4* mat_proj, Vec4* v) {
 
 
 
-Mat4 Math::get_translation_matrix(float tx, float ty, float tz) {
+Mat4 get_translation_matrix(float tx, float ty, float tz) {
 	Mat4 mat = {{
 		{1, 0, 0, tx},
 		{0, 1, 0, ty},
@@ -102,7 +62,7 @@ Mat4 Math::get_translation_matrix(float tx, float ty, float tz) {
 	}};
 	return mat;
 }
-Mat4 Math::get_rotation_matrix_x(float angle) {
+Mat4 get_rotation_matrix_x(float angle) {
 	Mat4 mat = {{
 		{1, 0, 0, 0},
 		{0, cos(angle), -sin(angle), 0},
@@ -112,7 +72,7 @@ Mat4 Math::get_rotation_matrix_x(float angle) {
 	return mat;
 }
 
-Mat4 Math::get_rotation_matrix_y(float angle) {
+Mat4 get_rotation_matrix_y(float angle) {
 	Mat4 mat = {{
 		{cos(angle), 0, sin(angle), 0},
 		{0, 1, 0, 0},
@@ -122,7 +82,7 @@ Mat4 Math::get_rotation_matrix_y(float angle) {
 	return mat;
 }
 
-Mat4 Math::get_rotation_matrix_z(float angle) {
+Mat4 get_rotation_matrix_z(float angle) {
 	Mat4 mat = {{
 		{cos(angle), -sin(angle), 0, 0},
 		{sin(angle), cos(angle), 0, 0},
@@ -131,7 +91,7 @@ Mat4 Math::get_rotation_matrix_z(float angle) {
 	}};
 	return mat;
 }
-Mat4 Math::get_scaling_matrix(float sx, float sy, float sz) {
+Mat4 get_scaling_matrix(float sx, float sy, float sz) {
 	Mat4 mat = {{
 		{sx, 0, 0, 0},
 		{0, sy, 0, 0},
@@ -142,13 +102,13 @@ Mat4 Math::get_scaling_matrix(float sx, float sy, float sz) {
 }
 
 
-Mat4 Math::get_view_matrix(float cam_x, float cam_y, float cam_z) {
+Mat4 get_view_matrix(float cam_x, float cam_y, float cam_z) {
 	return get_translation_matrix(-cam_x, -cam_y, -cam_z);
 }
 
 
 
-Mat4 Math::calculate_transform_matrix(const Transform *transform) {
+Mat4 calculate_transform_matrix(const Transform *transform) {
 	Mat4 rotation_x = get_rotation_matrix_x(transform->rot_x);
 	Mat4 rotation_y = get_rotation_matrix_y(transform->rot_y);
 	Mat4 rotation_z = get_rotation_matrix_z(transform->rot_z);
@@ -167,7 +127,7 @@ Mat4 Math::calculate_transform_matrix(const Transform *transform) {
 
 
 
-Mat4 Math::calculate_view_matrix(const Transform *transform) {
+Mat4 calculate_view_matrix(const Transform *transform) {
 	Mat4 rotation_x = get_rotation_matrix_x(-transform->rot_x);
 	Mat4 rotation_y = get_rotation_matrix_y(-transform->rot_y);
 	Mat4 rotation_z = get_rotation_matrix_z(-transform->rot_z);
@@ -186,7 +146,7 @@ Mat4 Math::calculate_view_matrix(const Transform *transform) {
 
 
 
-Vec3 Math::normalize(const Vec3& v) {
+Vec3 normalize(const Vec3& v) {
 	float length = std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 
 	if (length == 0) {
@@ -197,7 +157,7 @@ Vec3 Math::normalize(const Vec3& v) {
 }
 
 
-Vec3 Math::cross(const Vec3& a, const Vec3& b) {
+Vec3 cross(const Vec3& a, const Vec3& b) {
 	Vec3 result;
 	result.x = a.y * b.z - a.z * b.y;
 	result.y = a.z * b.x - a.x * b.z;
@@ -205,7 +165,8 @@ Vec3 Math::cross(const Vec3& a, const Vec3& b) {
 	return result;
 }
 
-float Math::dot(const Vec3& a, const Vec3& b) {
+float dot(const Vec3& a, const Vec3& b) {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
+}
