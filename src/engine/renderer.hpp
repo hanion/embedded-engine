@@ -47,6 +47,9 @@ public:
 	static void draw_mesh(const Mesh& mesh, const Transform& transform, const Camera& camera);
 	inline static Vec3 calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2);
 	inline static Vec3 calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2, const Vec3& v3);
+
+
+	static void fill_face(const std::vector<Vec4>& vertices, const Index indices[4], const Color& color);
 };
 
 

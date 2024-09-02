@@ -89,10 +89,10 @@ void CubeDemo::on_event(Event event) {
 			m_camera.rotate_y(rotation_speed);
 			break;
 		case 'z':
-			m_camera.zoom(speed/5.0f);
+			m_camera.zoom(speed/8.0f);
 			break;
 		case 'x':
-			m_camera.zoom(-speed/5.0f);
+			m_camera.zoom(-speed/8.0f);
 			break;
 		default:
 			break;

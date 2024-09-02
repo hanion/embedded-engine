@@ -57,22 +57,6 @@ file(
   "${CMAKE_SOURCE_DIR}/Drivers/*.c"
   "${CMAKE_SOURCE_DIR}/Drivers/*.cpp")
 
-# Recursively include all header files
-# file(
-#   GLOB_RECURSE
-#   PROJECT_INCLUDES
-#   # "/usr/include"
-#   # "/usr/local/include"
-#   # "/usr/lib/clang/18/include"
-#   "${CMAKE_SOURCE_DIR}"
-#   "${CMAKE_SOURCE_DIR}/src/platform/stm/"
-#   "${CMAKE_SOURCE_DIR}/../../engine/"
-#   "${CMAKE_SOURCE_DIR}/../../app/"
-#   "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include"
-#   "${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Include"
-#   "${CMAKE_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc"
-#   "${CMAKE_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy")
-
 set(PROJECT_DEFINES # LIST COMPILER DEFINITIONS HERE
 )
 

@@ -366,6 +366,10 @@ void Renderer::draw_mesh(const Mesh& mesh, const Transform& transform, const Cam
 			continue;
 		}
 
+		// NOTE: too slow
+		// fill_face(transformed_vertices, face.indices, face.color);
+		// continue;
+
 		for (size_t i = 0; i < 4; ++i) {
 			const Index& current = face.indices[i];
 			const Index& next = face.indices[(i + 1) % 4];
@@ -393,5 +397,42 @@ Vec3 Renderer::calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3&
 	Vec3 normal2 = Math::normalize(Math::cross(edge2, edge3));
 
 	return Math::normalize(normal1 + normal2);
+}
+
+
+
+
+
+
+void Renderer::fill_face(const std::vector<Vec4>& vertices, const Index indices[4], const Color& color) {
+	Index sorted_indices[4] = { indices[0], indices[1], indices[2], indices[3] };
+	for (int i = 0; i < 4; ++i) {
+		for (int j = i + 1; j < 4; ++j) {
+			if (vertices[sorted_indices[i]].y > vertices[sorted_indices[j]].y) {
+				std::swap(sorted_indices[i], sorted_indices[j]);
+			}
+		}
+	}
+
+	for (float y = vertices[sorted_indices[0]].y; y <= vertices[sorted_indices[3]].y; y++) {
+		std::vector<float> x_intersections;
+		for (int i = 0; i < 4; ++i) {
+			int j = (i + 1) % 4;
+			const Vec4& v1 = vertices[sorted_indices[i]];
+			const Vec4& v2 = vertices[sorted_indices[j]];
+
+			if ((v1.y <= y && v2.y >= y) || (v2.y <= y && v1.y >= y)) {
+				float t = (y - v1.y) / (v2.y - v1.y);
+				float x = v1.x + t * (v2.x - v1.x);
+				x_intersections.push_back(x);
+			}
+		}
+
+		std::sort(x_intersections.begin(), x_intersections.end());
+
+		for (size_t i = 0; i < x_intersections.size(); i += 2) {
+			draw_line(x_intersections[i], y, x_intersections[i + 1], y, color);
+		}
+	}
 }
 
