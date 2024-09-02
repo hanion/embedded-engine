@@ -2,6 +2,7 @@
 #include "cube.hpp"
 #include "dino.hpp"
 #include "display_string.hpp"
+#include "doom.hpp"
 #include "game_of_life.hpp"
 #include "rule110.hpp"
 
@@ -21,7 +22,8 @@ private:
 	Rule110 rule110;
 	GameOfLife game_of_life;
 	DisplayString display_string;
-	Application* m_active_app = &cube_demo;
+	Doom doom;
+	Application* m_active_app = &doom;
 };
 
 Application* CreateApplication() {

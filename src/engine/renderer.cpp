@@ -30,7 +30,7 @@ void Renderer::clear_back_buffer(void) {
 	memset((*back_buffer), 0, sizeof(buffer1));
 }
 
-void Renderer::set_pixel(int x, int y, Color color) {
+void Renderer::set_pixel(int x, int y, const Color& color) {
 	if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
 		return;
 	}

@@ -30,7 +30,7 @@ public:
 	static void swap_buffers(void);
 
 	static void clear_back_buffer(void);
-	static void set_pixel(int x, int y, Color color);
+	static void set_pixel(int x, int y, const Color& color);
 	static void set_Pixel(Pixel pixel);
 
 	static void draw_line(int x0, int y0, int x1, int y1);
