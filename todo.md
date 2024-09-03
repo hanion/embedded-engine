@@ -4,14 +4,13 @@
 
 ## queue ##
 
- - camera class
+ - sliding
 
- - fps controller
+ - weapon
 
 ---
 
 ##### maybe #####
 
- - create a depth buffer
 
 

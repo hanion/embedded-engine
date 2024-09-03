@@ -100,4 +100,10 @@ struct vf2 {
 		x -= other.x;
 		y -= other.y;
 	}
+	bool operator==(const vf2& other) {
+		return (x == other.x) && (y == other.y);
+	}
+	bool operator!=(const vf2& other) {
+		return !(*this == other);
+	}
 };

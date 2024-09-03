@@ -138,26 +138,38 @@ void Doom::on_update() {
 
 
 
+bool collision(vf2 pos) {
+	if (pos.x < 0 || pos.x >= MAP_WIDTH || pos.y < 0 || pos.y >= MAP_HEIGHT) {
+		return true;
+	}
+
+	if (map[int(pos.y)][int(pos.x)]) {
+		return true;
+	}
+
+	return false;
+}
 
 void Doom::on_event(Event event) {
 	if (event.type == Event::Type::Released) {
 		return;
 	}
 
+	vf2 new_pos = player;
 	switch (event.keycode) {
 		case 'w':
-			player += player_dir * m_speed;
+			new_pos += player_dir * m_speed;
 			break;
 		case 's':
-			player -= player_dir * m_speed;
+			new_pos -= player_dir * m_speed;
 			break;
 		case 'a':
-			player.x += player_dir.y * m_speed;
-			player.y -= player_dir.x * m_speed;
+			new_pos.x += player_dir.y * m_speed;
+			new_pos.y -= player_dir.x * m_speed;
 			break;
 		case 'd':
-			player.x -= player_dir.y * m_speed;
-			player.y += player_dir.x * m_speed;
+			new_pos.x -= player_dir.y * m_speed;
+			new_pos.y += player_dir.x * m_speed;
 			break;
 		case 'j':
 			player_dir = player_dir.rotated_z(-m_rotation_speed);
@@ -180,4 +192,11 @@ void Doom::on_event(Event event) {
 		default:
 			break;
 	}
+
+	if (new_pos != player) {
+		if (!collision(new_pos)) {
+			player = new_pos;
+		}
+	}
+	
 }
