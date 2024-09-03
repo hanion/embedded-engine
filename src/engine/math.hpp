@@ -39,5 +39,14 @@ Vec3 normalize(const Vec3& v);
 Vec3 cross(const Vec3& a, const Vec3& b);
 float dot(const Vec3& a, const Vec3& b);
 
+inline float clamp(float a, float min, float max) {
+	if (a < min) {
+		a = min;
+	} else if (a > max) {
+		a = max;
+	}
+	return a;
+}
+
 };
 

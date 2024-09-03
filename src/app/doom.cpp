@@ -27,8 +27,30 @@ uint8_t map[MAP_HEIGHT][MAP_WIDTH] = {
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 };
 
+float depth_buffer[WIDTH];
 
-struct ray_cast_result {
+#define TEXTURE_WIDTH 16
+#define TEXTURE_HEIGHT 16
+uint8_t circle_texture[TEXTURE_HEIGHT][TEXTURE_WIDTH] = {
+	{0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0},
+	{0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0},
+	{0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0},
+	{0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0},
+	{0, 5, 5, 5, 5, 8, 8, 5, 5, 8, 8, 5, 5, 5, 5, 0},
+	{5, 5, 5, 5, 5, 8, 8, 5, 5, 8, 8, 5, 5, 5, 5, 5},
+	{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+	{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+	{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+	{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+	{5, 5, 5, 5, 5, 8, 8, 8, 8, 8, 8, 5, 5, 5, 5, 5},
+	{0, 5, 5, 5, 5, 8, 8, 8, 8, 8, 8, 5, 5, 5, 5, 0},
+	{0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0},
+	{0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0},
+	{0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0},
+	{0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0}
+};
+
+struct raycast_result {
 	bool successful = false;
 	vf2 intersection;
 	float distance;
@@ -36,8 +58,8 @@ struct ray_cast_result {
 	bool side;
 };
 
-ray_cast_result cast_ray(vf2 ray_start, vf2 ray_dir) {
-	ray_cast_result result;
+raycast_result cast_ray(vf2 ray_start, vf2 ray_dir) {
+	raycast_result result;
 
 	vf2 ray_unit_step_size = {
 		std::sqrt(1+ (ray_dir.y/ray_dir.x) * (ray_dir.y/ray_dir.x)),
@@ -109,6 +131,50 @@ void draw_filled(int x, float line_height, const Color& color) {
 }
 
 
+void Doom::draw_sprite(vf2 sprite) {
+	vf2 relative_position = sprite - player;
+
+	vf2 transformed_position = {
+		relative_position.x * player_dir.y - relative_position.y * player_dir.x,
+		relative_position.x * player_dir.x + relative_position.y * player_dir.y
+	};
+
+	if (transformed_position.y < 0.4f) {
+		return;
+	}
+
+	float screen_x = (WIDTH / 2.0f) * (1 - transformed_position.x / transformed_position.y);
+	float sprite_size = HEIGHT / transformed_position.y;
+
+	int sprite_left = static_cast<int>(screen_x - sprite_size / 2);
+	int sprite_right = static_cast<int>(screen_x + sprite_size / 2);
+
+	for (int x = sprite_left; x < sprite_right; ++x) {
+		if (x >= 0 && x < WIDTH) {
+			float tex_x = (x - sprite_left) / sprite_size * TEXTURE_WIDTH;
+			tex_x = std::min(std::max(tex_x, 0.0f), static_cast<float>(TEXTURE_WIDTH - 1));
+
+			if (transformed_position.y < depth_buffer[x]) {
+				for (int y = 0; y < sprite_size; ++y) {
+					int screen_y = static_cast<int>(HEIGHT / 2.0f - sprite_size / 2 + y);
+					if (screen_y >= 0 && screen_y < HEIGHT) {
+						float tex_y = y / sprite_size * TEXTURE_HEIGHT;
+						tex_y = std::min(std::max(tex_y, 0.0f), static_cast<float>(TEXTURE_HEIGHT - 1));
+
+						uint8_t tex_color = circle_texture[static_cast<int>(tex_y)][static_cast<int>(tex_x)];
+						if (tex_color) {
+							Color color;
+							color.value = tex_color;
+							Renderer::set_pixel(x, screen_y, color);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
 
 
 void Doom::on_ready() {}
@@ -119,9 +185,10 @@ void Doom::on_update() {
 	for (int ray = 0; ray < 64; ray++) {
 		ray_dir = ray_dir.rotated_z(m_view_degree/64.0f);
 
-		ray_cast_result result = cast_ray(player, ray_dir);
+		raycast_result result = cast_ray(player, ray_dir);
 		if (result.successful) {
 			float line_height = m_wall_height/(result.distance * player_dir.dot(ray_dir));
+			depth_buffer[ray] = result.distance;
 
 			Color color;
 			color.value = result.map_value;
@@ -129,9 +196,9 @@ void Doom::on_update() {
 				color.value+=2;
 			}
 			draw_filled(ray, line_height, color);
-			//draw_edges(ray, line_height, Color(1));
 		}
 	}
+	draw_sprite(test_sprite);
 // 	Renderer::draw_number(m_view_degree, 0,0);
 // 	Renderer::draw_number(m_wall_height, 0,8);
 }

@@ -15,6 +15,9 @@ public:
 	virtual void on_event(Event event) override final;
 
 private:
+	void draw_sprite(vf2 sprite);
+
+private:
 	float m_speed = 0.02f;
 	float m_rotation_speed = 0.8f;
 
@@ -23,6 +26,8 @@ private:
 
 	float m_view_degree = 88.0f;
 	float m_wall_height = 24.0f;
+
+	vf2 test_sprite = { 8.2f, 8.2f };
 };
 
 
