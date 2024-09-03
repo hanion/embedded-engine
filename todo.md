@@ -4,8 +4,6 @@
 
 ## queue ##
 
- - sliding
-
  - weapon
 
 ---

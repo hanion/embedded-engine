@@ -196,6 +196,10 @@ void Doom::on_event(Event event) {
 	if (new_pos != player) {
 		if (!collision(new_pos)) {
 			player = new_pos;
+		} else if (!collision({new_pos.x, player.y})) {
+			player.x = new_pos.x;
+		} else if (!collision({player.x, new_pos.y})) {
+			player.y = new_pos.y;
 		}
 	}
 	
