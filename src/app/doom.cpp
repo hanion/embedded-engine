@@ -23,14 +23,14 @@ const uint8_t map[MAP_HEIGHT][MAP_WIDTH] = {
 	{1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1},
 	{1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1},
 	{1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-	{1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 2, 2, 1, 0, 0, 1},
-	{1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1},
+	{1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1},
+	{1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1},
 	{1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1},
 	{1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1},
 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 	{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1}
 };
 
 float depth_buffer[WIDTH];
@@ -195,11 +195,11 @@ void draw_filled(int x, float line_height, const Color& color) {
 
 
 void Doom::draw_sprite(vf2 sprite, const Texture& texture) {
-	vf2 relative_position = sprite - player;
+	vf2 relative_position = sprite - m_player;
 
 	vf2 transformed_position = {
-		relative_position.x * player_dir.y - relative_position.y * player_dir.x,
-		relative_position.x * player_dir.x + relative_position.y * player_dir.y
+		relative_position.x * m_player_dir.y - relative_position.y * m_player_dir.x,
+		relative_position.x * m_player_dir.x + relative_position.y * m_player_dir.y
 	};
 
 	if (transformed_position.y < 0.4f) {
@@ -239,18 +239,7 @@ void Doom::draw_sprite(vf2 sprite, const Texture& texture) {
 }
 
 void Doom::on_ready() {
-	std::vector<vf2> enemy_positions = {
-		{9.5f, 7.5f},
-		{10.5f, 4.5f},
-		{14.5f, 13.5f},
-	};
-	Enemy enemy = {
-		.texture = &enemy_texture
-	};
-	for (const auto& pos : enemy_positions) {
-		enemy.position = pos;
-		m_enemies.push_back(enemy);
-	}
+	restart_level();
 }
 
 void Doom::on_update(double delta_time) {
@@ -258,13 +247,13 @@ void Doom::on_update(double delta_time) {
 
 	Renderer::clear_back_buffer();
 
-	vf2 ray_dir = player_dir.normalized().rotated_z(-m_view_degree/2.0f);
+	vf2 ray_dir = m_player_dir.normalized().rotated_z(-m_view_degree/2.0f);
 	for (int ray = 0; ray < 64; ray++) {
 		ray_dir = ray_dir.rotated_z(m_view_degree/64.0f);
 
-		raycast_result result = cast_ray(player, ray_dir);
+		raycast_result result = cast_ray(m_player, ray_dir);
 		if (result.successful) {
-			float line_height = m_wall_height/(result.distance * player_dir.dot(ray_dir));
+			float line_height = m_wall_height/(result.distance * m_player_dir.dot(ray_dir));
 			depth_buffer[ray] = result.distance;
 
 			Color color;
@@ -279,8 +268,8 @@ void Doom::on_update(double delta_time) {
 	// sort enemy sprites
 	std::sort(m_enemies.begin(), m_enemies.end(),
 		[this](const Enemy& a, const Enemy& b) {
-			float dist_a = std::pow(a.position.x - player.x, 2) + std::pow(a.position.y - player.y, 2);
-			float dist_b = std::pow(b.position.x - player.x, 2) + std::pow(b.position.y - player.y, 2);
+			float dist_a = std::pow(a.position.x - m_player.x, 2) + std::pow(a.position.y - m_player.y, 2);
+			float dist_b = std::pow(b.position.x - m_player.x, 2) + std::pow(b.position.y - m_player.y, 2);
 			return dist_a > dist_b;
 		}
 	);
@@ -299,7 +288,10 @@ void Doom::on_update(double delta_time) {
 		draw_sprite(proj.position, *proj.texture);
 	}
 
-	Renderer::draw_number(m_enemies.size(), 58,1);
+	uint8_t enemy_count = m_enemies.size();
+	if (enemy_count) {
+		Renderer::draw_number(enemy_count, 58,1);
+	}
 
 	draw_health_bar();
 
@@ -337,8 +329,8 @@ void Doom::draw_health_bar() {
 
 void Doom::shoot() {
 	Projectile proj = {
-		.position = player,
-		.direction = player_dir,
+		.position = m_player,
+		.direction = m_player_dir,
 		.speed = 10.0f,
 		.texture = &projectile_texture
 	};
@@ -395,7 +387,7 @@ void Doom::update_projectiles(double delta_time) {
 
 void Doom::update_enemies(double delta_time) {
 	for (auto& enemy : m_enemies) {
-		vf2 dif = player - enemy.position;
+		vf2 dif = m_player - enemy.position;
 
 		float distance = sqrt(dif.x * dif.x + dif.y * dif.y);
 		if (distance < ENEMY_COLLIDER_RADIUS) {
@@ -430,6 +422,27 @@ void Doom::move_and_slide(vf2& source, const vf2& delta) {
 }
 
 
+void Doom::restart_level() {
+	m_enemies.clear();
+	m_projectiles.clear();
+
+	std::vector<vf2> enemy_positions = {
+		{9.5f, 7.5f},
+		{10.5f, 4.5f},
+		{14.5f, 13.5f},
+	};
+	Enemy enemy = {
+		.texture = &enemy_texture
+	};
+	for (const auto& pos : enemy_positions) {
+		enemy.position = pos;
+		m_enemies.push_back(enemy);
+	}
+
+	m_player = { 1.5f, 1.5f };
+	m_player_dir = { 1.0f, 1.0f };
+	m_health = 100.0f;
+}
 
 void Doom::on_event(Event event) {
 	if (event.type == Event::Type::Released) {
@@ -445,39 +458,35 @@ void Doom::on_event(Event event) {
 	vf2 movement = {0.0f,0.0f};
 	switch (event.keycode) {
 		case 'w':
-			movement += player_dir * m_speed * m_delta_time;
+			movement += m_player_dir * m_speed * m_delta_time;
 			break;
 		case 's':
-			movement -= player_dir * m_speed * m_delta_time;
+			movement -= m_player_dir * m_speed * m_delta_time;
 			break;
 		case 'a':
-			movement.x += player_dir.y * m_speed * m_delta_time;
-			movement.y -= player_dir.x * m_speed * m_delta_time;
+			movement.x += m_player_dir.y * m_speed * m_delta_time;
+			movement.y -= m_player_dir.x * m_speed * m_delta_time;
 			break;
 		case 'd':
-			movement.x -= player_dir.y * m_speed * m_delta_time;
-			movement.y += player_dir.x * m_speed * m_delta_time;
+			movement.x -= m_player_dir.y * m_speed * m_delta_time;
+			movement.y += m_player_dir.x * m_speed * m_delta_time;
 			break;
 		case 'j':
-			player_dir = player_dir.rotated_z(-m_rotation_speed * m_delta_time);
+			m_player_dir = m_player_dir.rotated_z(-m_rotation_speed * m_delta_time);
 			break;
 		case 'l':
-			player_dir = player_dir.rotated_z(m_rotation_speed * m_delta_time);
+			m_player_dir = m_player_dir.rotated_z(m_rotation_speed * m_delta_time);
 			break;
-// 		case 'x':
-// 			m_view_degree += 0.1f;
-// 			break;
-// 		case 'z':
-// 			m_view_degree -= 0.1f;
-// 			break;
-// 		case 'i':
-// 			m_wall_height += 0.1f;
-// 			break;
-// 		case 'k':
-// 			m_wall_height -= 0.1f;
-// 			break;
 		default:
 			break;
 	}
-	move_and_slide(player, movement);
+	if (collision(m_player+movement)) {
+		if (map[int(m_player.y+movement.y)][int(m_player.x+movement.x)] == 2) {
+			if (m_enemies.size() == 0) {
+				// TODO: next level
+				restart_level();
+			}
+		}
+	}
+	move_and_slide(m_player, movement);
 }

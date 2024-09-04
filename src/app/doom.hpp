@@ -54,14 +54,16 @@ private:
 
 	void draw_health_bar();
 
+	void restart_level();
+
 private:
 	float m_delta_time = 0.1f;
 
 	float m_speed = 1.2f;
 	float m_rotation_speed = 100.0f;
 
-	vf2 player = { 1.5f, 1.5f };
-	vf2 player_dir = { 1.0f, 1.0f };
+	vf2 m_player = { 1.5f, 1.5f };
+	vf2 m_player_dir = { 1.0f, 1.0f };
 	float m_health = 100.0f;
 
 	float m_view_degree = 88.0f;
