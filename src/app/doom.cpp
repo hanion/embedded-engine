@@ -7,14 +7,19 @@
 
 #define RAY_MAX_DISTANCE 100
 #define ENEMY_COLLIDER_RADIUS 0.4f
+#define ENEMY_FIRE_INTERVAL 0.5f
+#define HEALTH_BAR_SIZE 30
+#define WEAPON_POS_X 40
+#define WEAPON_POS_Y 23
+
 
 #define MAP_WIDTH 16
 #define MAP_HEIGHT 16
 const uint8_t map[MAP_HEIGHT][MAP_WIDTH] = {
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 0, 1, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1},
-	{1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
+	{1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1},
+	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
 	{1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1},
 	{1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1},
 	{1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
@@ -63,6 +68,20 @@ const uint8_t projectile_circle_texture[PROJECTILE_TEXTURE_HEIGHT][PROJECTILE_TE
 	{0, 7, 4, 4, 4, 4, 4, 7, 0},
 	{0, 7, 7, 4, 4, 4, 7, 7, 0},
 	{0, 0, 0, 7, 7, 7, 0, 0, 0}
+};
+
+#define GUN_TEXTURE_WIDTH 9
+#define GUN_TEXTURE_HEIGHT 9
+const uint8_t gun_texture[GUN_TEXTURE_HEIGHT][GUN_TEXTURE_WIDTH] = {
+	{0, 7, 7, 0, 0, 0, 0, 0, 0},
+	{7, 8, 8, 7, 7, 0, 0, 0, 0},
+	{7, 8, 8, 8, 8, 7, 7, 0, 0},
+	{7, 8, 8, 8, 8, 8, 8, 7, 0},
+	{0, 7, 8, 8, 8, 8, 8, 8, 7},
+	{0, 0, 7, 8, 8, 8, 8, 8, 7},
+	{0, 0, 0, 7, 8, 8, 8, 8, 7},
+	{0, 0, 0, 7, 7, 8, 8, 8, 7},
+	{0, 0, 0, 7, 8, 7, 7, 7, 0},
 };
 Texture enemy_texture = {
 	.data = &circle_texture[0][0],
@@ -221,21 +240,17 @@ void Doom::draw_sprite(vf2 sprite, const Texture& texture) {
 
 void Doom::on_ready() {
 	std::vector<vf2> enemy_positions = {
-		{4.2f, 2.2f},
-		{8.5f, 7.5f},
 		{9.5f, 7.5f},
-		{10.5f, 2.5f},
 		{10.5f, 4.5f},
+		{14.5f, 13.5f},
 	};
 	Enemy enemy = {
-		.position = {8.2f, 8.2f},
 		.texture = &enemy_texture
 	};
 	for (const auto& pos : enemy_positions) {
 		enemy.position = pos;
 		m_enemies.push_back(enemy);
 	}
-	m_enemies.push_back(enemy);
 }
 
 void Doom::on_update(double delta_time) {
@@ -261,6 +276,15 @@ void Doom::on_update(double delta_time) {
 		}
 	}
 
+	// sort enemy sprites
+	std::sort(m_enemies.begin(), m_enemies.end(),
+		[this](const Enemy& a, const Enemy& b) {
+			float dist_a = std::pow(a.position.x - player.x, 2) + std::pow(a.position.y - player.y, 2);
+			float dist_b = std::pow(b.position.x - player.x, 2) + std::pow(b.position.y - player.y, 2);
+			return dist_a > dist_b;
+		}
+	);
+
 	update_enemies(delta_time);
 
 	// draw enemies
@@ -268,16 +292,48 @@ void Doom::on_update(double delta_time) {
 		draw_sprite(enemy.position, *enemy.texture);
 	}
 
-	// update projectiles
 	update_projectiles(delta_time);
 
 	// draw projectiles
 	for (auto& proj : m_projectiles) {
 		draw_sprite(proj.position, *proj.texture);
 	}
+
+	Renderer::draw_number(m_enemies.size(), 58,1);
+
+	draw_health_bar();
+
+	// draw weapon
+	Color color;
+	for (int row = 0; row < GUN_TEXTURE_HEIGHT; ++row) {
+		for (int col = 0; col < GUN_TEXTURE_HEIGHT; ++col) {
+			color.value = gun_texture[row][col];
+			if (color.value) {
+				Renderer::set_pixel(col+WEAPON_POS_X, row+WEAPON_POS_Y, color);
+			}
+		}
+	}
+	
 }
 
 
+void Doom::draw_health_bar() {
+	uint8_t health_pixels = (m_health / 100.0f) * (HEALTH_BAR_SIZE-1);
+	for (uint8_t i = 0; i < HEALTH_BAR_SIZE-1; ++i) {
+		if (i >= health_pixels) {
+			Renderer::set_pixel(1+i, 2, Color(0,0,0));
+		} else {
+			Renderer::set_pixel(1+i, 2, Color(1,0,0));
+		}
+	}
+	Color healt_bar_color = {1,1,1};
+	for (uint8_t i = 0; i < HEALTH_BAR_SIZE; ++i) {
+		Renderer::set_pixel(1+i, 1, healt_bar_color);
+		Renderer::set_pixel(1+i, 3, healt_bar_color);
+	}
+	Renderer::set_pixel(1, 2, healt_bar_color);
+	Renderer::set_pixel(HEALTH_BAR_SIZE, 2, healt_bar_color);
+}
 
 void Doom::shoot() {
 	Projectile proj = {
@@ -330,7 +386,6 @@ void Doom::update_projectiles(double delta_time) {
 			p.position.x > MAP_WIDTH || p.position.y > MAP_HEIGHT ||
 			collision(p.position) ||
 			collide_with_enemy(p.position) ) {
-			//++it;
 			it = m_projectiles.erase(it);
 		} else {
 			++it;
@@ -344,6 +399,11 @@ void Doom::update_enemies(double delta_time) {
 
 		float distance = sqrt(dif.x * dif.x + dif.y * dif.y);
 		if (distance < ENEMY_COLLIDER_RADIUS) {
+			enemy.hit_timer += delta_time;
+			if (enemy.hit_timer > ENEMY_FIRE_INTERVAL) {
+				enemy.hit_timer = 0.0f;
+				m_health -= 10.0f;
+			}
 			continue;
 		}
 
@@ -404,18 +464,18 @@ void Doom::on_event(Event event) {
 		case 'l':
 			player_dir = player_dir.rotated_z(m_rotation_speed * m_delta_time);
 			break;
-		case 'x':
-			m_view_degree += 0.1f;
-			break;
-		case 'z':
-			m_view_degree -= 0.1f;
-			break;
-		case 'i':
-			m_wall_height += 0.1f;
-			break;
-		case 'k':
-			m_wall_height -= 0.1f;
-			break;
+// 		case 'x':
+// 			m_view_degree += 0.1f;
+// 			break;
+// 		case 'z':
+// 			m_view_degree -= 0.1f;
+// 			break;
+// 		case 'i':
+// 			m_wall_height += 0.1f;
+// 			break;
+// 		case 'k':
+// 			m_wall_height -= 0.1f;
+// 			break;
 		default:
 			break;
 	}
