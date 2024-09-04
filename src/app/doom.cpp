@@ -175,10 +175,8 @@ void Doom::draw_sprite(vf2 sprite) {
 }
 
 
+void Doom::on_update(double delta_time) {
 
-
-void Doom::on_ready() {}
-void Doom::on_update() {
 	Renderer::clear_back_buffer();
 
 	vf2 ray_dir = player_dir.normalized().rotated_z(-m_view_degree/2.0f);
@@ -203,6 +201,7 @@ void Doom::on_update() {
 // 	Renderer::draw_number(m_wall_height, 0,8);
 }
 
+void Doom::on_ready() {}
 
 
 bool collision(vf2 pos) {

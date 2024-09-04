@@ -178,7 +178,7 @@ void DinoGame::on_ready() {
 	init_obstacles();
 }
 
-void DinoGame::on_update() {
+void DinoGame::on_update(double delta_time) {
 	Renderer::clear_back_buffer();
 
 	draw_ground();

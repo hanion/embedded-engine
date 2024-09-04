@@ -58,7 +58,7 @@ void Rule110::on_ready() {
 	rbuffer[WIDTH-1][0] = 1;
 }
 
-void Rule110::on_update() {
+void Rule110::on_update(double delta_time) {
 	Renderer::clear_back_buffer();
 
 	if (++wait_frames > advance_rule_interval) {

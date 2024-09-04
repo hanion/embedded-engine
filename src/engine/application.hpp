@@ -10,7 +10,7 @@ public:
 	virtual ~Application() {}
 
 	virtual void on_ready() {}
-	virtual void on_update() {}
+	virtual void on_update(double delta_time);
 	virtual void on_event(Event event) {}
 
 protected:

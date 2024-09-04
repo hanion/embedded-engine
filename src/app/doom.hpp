@@ -11,7 +11,7 @@ public:
 	virtual ~Doom() {}
 
 	virtual void on_ready() override final;
-	virtual void on_update() override final;
+	virtual void on_update(double delta_time) override final;
 	virtual void on_event(Event event) override final;
 
 private:

@@ -26,7 +26,7 @@ void DisplayString::on_ready() {
 }
 
 
-void DisplayString::on_update() {
+void DisplayString::on_update(double delta_time) {
 	Renderer::clear_back_buffer();
 	for (uint8_t i = 0; i < MSG_COUNT; ++i) {
 		scroll_msg(&msgs[i]);

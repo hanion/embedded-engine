@@ -17,7 +17,7 @@ public:
 	virtual ~DisplayString() {}
 
 	virtual void on_ready() override final;
-	virtual void on_update() override final;
+	virtual void on_update(double delta_time) override final;
 
 private:
 	void scroll_msg(Message* msg);

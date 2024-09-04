@@ -8,7 +8,7 @@ public:
 	virtual ~Rule110() {}
 
 	virtual void on_ready() override final;
-	virtual void on_update() override final;
+	virtual void on_update(double delta_time) override final;
 	virtual void on_event(Event event) override final;
 
 private:
@@ -16,7 +16,7 @@ private:
 	void copy_to_back_buffer();
 
 private:
-	uint8_t rbuffer[WIDTH][HEIGHT] = {0};
+	uint8_t rbuffer[WIDTH][HEIGHT] = {{0}};
 	uint8_t rcurrent_row = 0;
 
 	#define ADVANCE_RULE_INTERVAL_MAX 10;

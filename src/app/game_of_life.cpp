@@ -79,7 +79,7 @@ void GameOfLife::on_ready() {
 }
 
 
-void GameOfLife::on_update() {
+void GameOfLife::on_update(double delta_time) {
 	Renderer::clear_back_buffer();
 
 	if (++wait_frames > advance_rule_interval) {

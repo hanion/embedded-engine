@@ -13,7 +13,7 @@ public:
 	~ShowcaseDemos() {}
 
 	virtual void on_ready() override final;
-	virtual void on_update() override final;
+	virtual void on_update(double delta_time) override final;
 	virtual void on_event(Event event) override final;
 
 private:
@@ -36,8 +36,8 @@ void ShowcaseDemos::on_ready() {
 	m_active_app->on_ready();
 }
 
-void ShowcaseDemos::on_update() {
-	m_active_app->on_update();
+void ShowcaseDemos::on_update(double delta_time) {
+	m_active_app->on_update(delta_time);
 }
 
 void ShowcaseDemos::on_event(Event event) {

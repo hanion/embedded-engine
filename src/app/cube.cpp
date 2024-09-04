@@ -21,7 +21,7 @@ void CubeDemo::on_ready() {
 }
 
 
-void CubeDemo::on_update() {
+void CubeDemo::on_update(double delta_time) {
 	Renderer::clear_back_buffer();
 	model0.rot_x += m_speed * m_level;
 	model0.rot_y += m_speed * m_level;

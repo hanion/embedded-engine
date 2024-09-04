@@ -8,7 +8,7 @@ public:
 	virtual ~GameOfLife() {}
 
 	virtual void on_ready() override final;
-	virtual void on_update() override final;
+	virtual void on_update(double delta_time) override final;
 	virtual void on_event(Event event) override final;
 
 private:
@@ -19,8 +19,8 @@ private:
 	void create_glider(uint8_t start_x, uint8_t start_y);
 
 private:
-	uint8_t grid[WIDTH][HEIGHT] = {0};
-	uint8_t new_grid[WIDTH][HEIGHT] = {0};
+	uint8_t grid[WIDTH][HEIGHT] = {{0}};
+	uint8_t new_grid[WIDTH][HEIGHT] = {{0}};
 
 	#define ADVANCE_RULE_INTERVAL_MAX 10;
 	int8_t advance_rule_interval = 4;

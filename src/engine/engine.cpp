@@ -21,7 +21,7 @@ void Engine::run() {
 			EventManager::send_events_in_queue(this);
 
 			if (!Renderer::is_back_buffer_new){
-				m_application.on_update();
+				m_application.on_update(m_DeltaTime);
 				Renderer::is_back_buffer_new = true;
 			}
 			// TODO: on_render();
