@@ -64,6 +64,12 @@ const uint8_t projectile_circle_texture[PROJECTILE_TEXTURE_HEIGHT][PROJECTILE_TE
 	{0, 7, 7, 4, 4, 4, 7, 7, 0},
 	{0, 0, 0, 7, 7, 7, 0, 0, 0}
 };
+Texture enemy_texture = {
+	.data = &circle_texture[0][0],
+	.width = TEXTURE_WIDTH,
+	.height = TEXTURE_HEIGHT,
+	.scale = 1.0f
+};
 Texture projectile_texture = {
 	.data = &projectile_circle_texture[0][0],
 	.width = PROJECTILE_TEXTURE_WIDTH,
@@ -148,9 +154,24 @@ void draw_filled(int x, float line_height, const Color& color) {
 	if (line_height > HEIGHT) {
 		line_height = HEIGHT;
 	}
+
+#define OPTIMIZE_LINE_DRAWING 1
+#if OPTIMIZE_LINE_DRAWING
+	int start_y = static_cast<int>(HEIGHT / 2.0f - line_height / 2.0f);
+	int end_y = start_y + static_cast<int>(line_height);
+	if (x < 0 || x >= WIDTH || start_y < 0 || end_y > HEIGHT) {
+		return;
+	}
+	int num_pixels = end_y - start_y;
+	int num_bytes = num_pixels * sizeof(uint8_t);
+	uint8_t* column_start = &(*Renderer::back_buffer)[x][start_y];
+	memset(column_start, color.value, num_bytes);
+	return;
+#else
 	for (int y = 0; y < line_height; ++y) {
 		Renderer::set_pixel(x, y + (HEIGHT/2.0f-line_height/2.0f), color);
 	}
+#endif
 }
 
 
@@ -169,7 +190,7 @@ void Doom::draw_sprite(vf2 sprite, const Texture& texture) {
 	float screen_x = (WIDTH / 2.0f) * (1 - transformed_position.x / transformed_position.y);
 	float sprite_size = (HEIGHT / transformed_position.y) * texture.scale;
 
-	int sprite_left = static_cast<int>(screen_x - sprite_size / 2);
+	int sprite_left  = static_cast<int>(screen_x - sprite_size / 2);
 	int sprite_right = static_cast<int>(screen_x + sprite_size / 2);
 
 	for (int x = sprite_left; x < sprite_right; ++x) {
@@ -189,6 +210,7 @@ void Doom::draw_sprite(vf2 sprite, const Texture& texture) {
 							Color color;
 							color.value = tex_color;
 							Renderer::set_pixel(x, screen_y, color);
+							depth_buffer[x] = transformed_position.y;
 						}
 					}
 				}
@@ -207,11 +229,7 @@ void Doom::on_ready() {
 	};
 	Enemy enemy = {
 		.position = {8.2f, 8.2f},
-		.texture = {
-			.data = &circle_texture[0][0],
-			.width = TEXTURE_WIDTH,
-			.height = TEXTURE_HEIGHT,
-		}
+		.texture = &enemy_texture
 	};
 	for (const auto& pos : enemy_positions) {
 		enemy.position = pos;
@@ -247,7 +265,7 @@ void Doom::on_update(double delta_time) {
 
 	// draw enemies
 	for (auto& enemy : m_enemies) {
-		draw_sprite(enemy.position, enemy.texture);
+		draw_sprite(enemy.position, *enemy.texture);
 	}
 
 	// update projectiles
@@ -255,7 +273,7 @@ void Doom::on_update(double delta_time) {
 
 	// draw projectiles
 	for (auto& proj : m_projectiles) {
-		draw_sprite(proj.position, proj.texture);
+		draw_sprite(proj.position, *proj.texture);
 	}
 }
 
@@ -266,7 +284,7 @@ void Doom::shoot() {
 		.position = player,
 		.direction = player_dir,
 		.speed = 10.0f,
-		.texture = projectile_texture
+		.texture = &projectile_texture
 	};
 	m_projectiles.push_back(proj);
 }
@@ -291,7 +309,7 @@ bool Doom::collide_with_enemy(vf2 pos) {
 		float dx = std::abs(pos.x - enemy.position.x);
 		float dy = std::abs(pos.y - enemy.position.y);
 		if (dy < ENEMY_COLLIDER_RADIUS && dx < ENEMY_COLLIDER_RADIUS) {
-			enemy.health -= 50.0f;
+			enemy.health -= 10.0f;
 			if (enemy.health <= 0) {
 				m_enemies.erase(it);
 			}
@@ -323,15 +341,14 @@ void Doom::update_projectiles(double delta_time) {
 void Doom::update_enemies(double delta_time) {
 	for (auto& enemy : m_enemies) {
 		vf2 dif = player - enemy.position;
-		float distance = sqrt(dif.x * dif.x + dif.y * dif.y);
 
+		float distance = sqrt(dif.x * dif.x + dif.y * dif.y);
 		if (distance < ENEMY_COLLIDER_RADIUS) {
 			continue;
 		}
 
-		vf2 direction = { dif.x / distance, dif.y / distance };
+		vf2 direction = dif.normalized();
 		move_and_slide(enemy.position, direction * enemy.speed * delta_time);
-
 	}
 }
 
