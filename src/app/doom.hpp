@@ -29,6 +29,19 @@ struct Projectile {
 	Texture* texture = nullptr;
 };
 
+struct Player {
+	vf2 position = { 1.5f, 1.5f };
+	vf2 direction = { 1.0f, 1.0f };
+	float health = 100.0f;
+
+	float speed = 1.2f;
+	float rotation_speed = 100.0f;
+
+	void hurt(float damage) {
+		health -= damage;
+	}
+};
+
 
 
 
@@ -59,15 +72,10 @@ private:
 private:
 	float m_delta_time = 0.1f;
 
-	float m_speed = 1.2f;
-	float m_rotation_speed = 100.0f;
-
-	vf2 m_player = { 1.5f, 1.5f };
-	vf2 m_player_dir = { 1.0f, 1.0f };
-	float m_health = 100.0f;
-
 	float m_view_degree = 88.0f;
 	float m_wall_height = 28.0f;
+
+	Player m_player;
 
 	std::vector<Projectile> m_projectiles;
 	std::vector<Enemy> m_enemies;
