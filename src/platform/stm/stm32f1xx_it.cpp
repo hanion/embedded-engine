@@ -235,9 +235,9 @@ void process_received_data(uint8_t data) {
 	key_code = data;
 
 	if (pressed) {
-		EventManager::activate_key(key_code);
+		EE::EventManager::activate_key(key_code);
 	} else {
-		EventManager::deactivate_key(key_code);
+		EE::EventManager::deactivate_key(key_code);
 	}
 
 	pressed = 0;

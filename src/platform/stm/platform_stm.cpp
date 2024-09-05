@@ -10,6 +10,7 @@
 #include "stm32f1xx_hal_uart.h"
 #include <cstdint>
 
+using namespace EE;
 
 extern "C" {
 extern void Error_Handler(void);

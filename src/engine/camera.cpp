@@ -1,6 +1,8 @@
 #include "camera.hpp"
 #include <cmath>
 
+using namespace EE;
+
 
 Camera::Camera() {
 	recalculate_perspective_projection();

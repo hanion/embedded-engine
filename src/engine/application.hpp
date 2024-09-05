@@ -3,6 +3,7 @@
 #include "event.hpp"
 #include <cstdint>
 
+namespace EE {
 
 class Application {
 public:
@@ -17,3 +18,4 @@ protected:
 	const char* name;
 };
 
+}

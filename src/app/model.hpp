@@ -1,6 +1,7 @@
 #pragma once
 #include "mesh.hpp"
 #include "renderer.hpp"
+using namespace EE;
 
 Mesh cube_mesh = Mesh(
 	{

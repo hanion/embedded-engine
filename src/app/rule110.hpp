@@ -1,6 +1,7 @@
 #pragma once
 
 #include "application.hpp"
+using namespace EE;
 
 class Rule110 : public Application {
 public:

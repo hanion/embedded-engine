@@ -1,5 +1,7 @@
 
 #include "mesh.hpp"
+using namespace EE;
+
 Mesh formatted_model = Mesh(
 	{
 	{1.250000, 0.000000, 0.000000},

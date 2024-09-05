@@ -1,6 +1,7 @@
 #pragma once
 
 #include "application.hpp"
+using namespace EE;
 #include "camera.hpp"
 #include "math.hpp"
 

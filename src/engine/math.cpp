@@ -5,6 +5,7 @@
 #include <string.h>
 #include <utility>
 
+namespace EE {
 namespace Math {
 
 Mat4 mat4_mul_mat4(const Mat4 *a, const Mat4 *b) {
@@ -169,4 +170,5 @@ float dot(const Vec3& a, const Vec3& b) {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
+}
 }

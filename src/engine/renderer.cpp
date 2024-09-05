@@ -2,13 +2,9 @@
 #include "mesh.hpp"
 #include "base.hpp"
 
+using namespace EE;
 
-#include <algorithm>
-#include <cmath>
-#include <limits>
-#include <stdlib.h>
-#include <string.h>
-#include <vector>
+
 
 uint8_t buffer1[WIDTH][HEIGHT];
 uint8_t buffer2[WIDTH][HEIGHT];

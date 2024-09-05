@@ -3,6 +3,8 @@
 #include "platform.hpp"
 #include "renderer.hpp"
 
+namespace EE {
+
 void Engine::run() {
 	Platform::on_init();
 	m_application.on_ready();
@@ -43,5 +45,5 @@ void Engine::on_event(Event event) {
 	m_application.on_event(event);
 }
 
-
+}
 

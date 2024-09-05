@@ -6,6 +6,7 @@
 
 #define ERRORS_HALT 1
 
+namespace EE {
 
 Event EventManager::event_queue[EVENT_QUEUE_MAX] = {};
 uint8_t EventManager::enqueued_event_count = 0;
@@ -89,5 +90,6 @@ void EventManager::deactivate_key(int keycode) {
 	}
 }
 
+}
 
 

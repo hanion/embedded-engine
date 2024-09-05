@@ -2,11 +2,11 @@
 #include "engine.hpp"
 #include "application.hpp"
 
-extern Application* CreateApplication();
+extern EE::Application* CreateApplication();
 
 int main(int argc, char** argv) {
-	Application* app = CreateApplication();
-	Engine engine = Engine(*app);
+	EE::Application* app = CreateApplication();
+	EE::Engine engine = EE::Engine(*app);
 	engine.run();
 	delete app;
 }

@@ -4,6 +4,7 @@
 
 #include "color.hpp"
 
+namespace EE {
 
 struct Vertex {
 	float x,y,z;
@@ -23,3 +24,5 @@ struct Mesh {
     std::vector<Vertex> vertices;
     std::vector<Face> faces;
 };
+
+}

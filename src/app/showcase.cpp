@@ -1,4 +1,5 @@
 #include "application.hpp"
+using namespace EE;
 #include "cube.hpp"
 #include "dino.hpp"
 #include "display_string.hpp"

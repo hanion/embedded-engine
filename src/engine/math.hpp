@@ -2,6 +2,7 @@
 #include "base.hpp"
 #include "vector.hpp"
 
+namespace EE {
 
 struct Mat4 {
 	float m[4][4];
@@ -50,3 +51,4 @@ inline float clamp(float a, float min, float max) {
 
 };
 
+}

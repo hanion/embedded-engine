@@ -1,6 +1,8 @@
 #pragma once
 #include "base.hpp"
 
+namespace EE {
+
 struct Color {
 	uint8_t value;
 
@@ -29,3 +31,6 @@ struct Color {
 	}
 
 };
+
+
+}

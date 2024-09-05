@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <vector>
 
+namespace EE {
 #define EVENT_QUEUE_MAX 32
 
 struct Event {
@@ -35,3 +36,5 @@ private:
 
 	static std::vector<int> active_keys;
 };
+
+}

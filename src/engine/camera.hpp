@@ -1,6 +1,8 @@
 #pragma once
 #include "math.hpp"
 
+namespace EE {
+
 class Camera {
 public:
 	Camera();
@@ -34,3 +36,4 @@ public:
 	float fov = 3.5f;
 };
 
+}

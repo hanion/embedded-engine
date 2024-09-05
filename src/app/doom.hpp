@@ -1,6 +1,7 @@
 #pragma once
 
 #include "application.hpp"
+using namespace EE;
 #include "math.hpp"
 #include "vector.hpp"
 

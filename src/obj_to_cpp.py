@@ -27,6 +27,7 @@ def format_mesh(vertices, faces):
 
 	mesh_str = f'''
 #include "mesh.hpp"
+using namespace EE;
 Mesh formatted_model = Mesh(
 	{{
 {formatted_vertices}

@@ -5,6 +5,7 @@
 #include "application.hpp"
 #include <cstdint>
 
+namespace EE {
 
 class Engine {
 public:
@@ -20,10 +21,11 @@ private:
 	uint32_t m_last_tick_time = 0;
 	double m_DeltaTime = 0.0;
 
-	uint8_t m_update_interval_ms = 10;
+	uint8_t m_update_interval_ms = 25;
 	Application& m_application;
 };
 
+}
 
 
 

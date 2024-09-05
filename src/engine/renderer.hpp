@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 
+namespace EE {
 
 
 typedef struct {
@@ -56,5 +57,6 @@ public:
 
 
 
+}
 
 
