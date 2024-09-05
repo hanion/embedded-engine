@@ -12,6 +12,8 @@ public:
 
 	static void render_buffer();
 	static void render_row();
+	
+	static void on_render();
 };
 
 

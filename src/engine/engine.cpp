@@ -5,17 +5,21 @@
 
 namespace EE {
 
+void Engine::stop() {
+	m_stop = true;
+}
+
 void Engine::run() {
 	Platform::on_init();
 	m_application.on_ready();
 
 	double accumulator = 0.0;
-	while (1) {
+	while (!m_stop) {
 		uint32_t delta = get_tick_delta_time();
 
 		accumulator += delta;
 		if (accumulator >= m_update_interval_ms) {
-			m_DeltaTime = accumulator / 1000.0;
+			m_DeltaTime = m_update_interval_ms / 1000.0;
 			accumulator -= m_update_interval_ms;
 
 			Platform::poll_events(this);
@@ -25,8 +29,8 @@ void Engine::run() {
 			if (!Renderer::is_back_buffer_new){
 				m_application.on_update(m_DeltaTime);
 				Renderer::is_back_buffer_new = true;
+				Platform::on_render();
 			}
-			// TODO: on_render();
 		}
 	}
 }

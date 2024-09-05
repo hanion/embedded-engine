@@ -43,10 +43,10 @@ void EventManager::activate_key(int keycode) {
 		return;
 	}
 	// NOTE: we should never receive key_down twice, without receiving key_up from the same keycode
-	if (ERRORS_HALT) {
+#if ERRORS_HALT
 		for (int key : active_keys) {
 			if (key == keycode) {
-				while(ERRORS_HALT){
+				while(true){
 					Renderer::clear_back_buffer();
 					Renderer::draw_number(keycode, 32,8);
 					Platform::render_buffer();
@@ -54,7 +54,8 @@ void EventManager::activate_key(int keycode) {
 				}
 			}
 		}
-	}
+#endif
+
 	active_keys.push_back(keycode);
 
 	Event new_button_pressed = Event(Event::Type::Pressed, keycode);
@@ -82,12 +83,14 @@ void EventManager::deactivate_key(int keycode) {
 	}
 	active_keys.clear();
 
-	while(ERRORS_HALT){
+#if ERRORS_HALT
+	while(true){
 		Renderer::clear_back_buffer();
 		Renderer::draw_number(keycode, 32,0);
 		Platform::render_buffer();
 		Renderer::is_back_buffer_new = true;
 	}
+#endif
 }
 
 }

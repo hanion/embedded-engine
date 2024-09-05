@@ -48,9 +48,25 @@ build_sim() {
   mkdir -p build_sim
   cd ./build_sim
 
-  #TODO: build for sim
+  run_cmake_configure() {
+    cmake -DTARGET_PLATFORM=sim -DCMAKE_BUILD_TYPE=Release -S ../src/platform/sim -B .
+  }
+  run_cmake_build() {
+    cmake --build . --config Release -- -j$(nproc)
+  }
+
+
+  run_cmake_configure || {
+    run_cmake_configure; exit 1;
+  }
+
+  run_cmake_build > /dev/null 2>&1 || {
+    run_cmake_build; exit 1;
+  }
 
   cd ..
+
+  echo "Done"
 }
 
 
@@ -69,9 +85,18 @@ if [ "$1" == "stm" ]; then
 fi
 
 
-# default: build and flash stm
-build_stm;
-./flash.sh > /dev/null 2>&1 || {
- ./flash.sh || exit 1
+build_and_flash_stm() {
+	build_stm;
+	./flash.sh > /dev/null 2>&1 || {
+	./flash.sh || exit 1
+	}
 }
+
+build_and_run_sim() {
+	build_sim;
+	./build_sim/ee-sim
+}
+
+# default:
+build_and_run_sim;
 

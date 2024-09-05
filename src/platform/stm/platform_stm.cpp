@@ -17,6 +17,7 @@ extern void Error_Handler(void);
 extern void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 }
 
+void Platform::on_render() {}
 
 SPI_HandleTypeDef hspi1;
 
