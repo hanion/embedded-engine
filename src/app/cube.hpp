@@ -28,10 +28,15 @@ public:
 	virtual void on_event(Event event) override final;
 
 private:
+	double m_delta_time;
 	Camera m_camera;
 
-	float m_speed = 0.01;
+	float m_cube_speed = 0.01;
 	int m_level = 2;
+
+	float m_speed = 15.0f;
+	float m_rotation_speed;
+	float m_zoom_speed = 2.0f;
 };
 
 

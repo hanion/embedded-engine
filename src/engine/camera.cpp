@@ -73,5 +73,20 @@ void Camera::zoom(float f) {
 	recalculate_view_projection();
 }
 
+Vec3 Camera::forward() {
+	Vec3 forward;
+	forward.x = std::sin(transform.rot_y);
+	forward.z = std::cos(transform.rot_y);
+	forward.y = 0.0f;
 
+	return forward.normalized();
+}
+Vec3 Camera::right() {
+	Vec3 right;
+	right.x = std::cos(transform.rot_y);
+	right.z = -std::sin(transform.rot_y);
+	right.y = 0.0f;
+
+	return right.normalized();
+}
 

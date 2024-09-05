@@ -3,14 +3,21 @@
 #include <cmath>
 #include <algorithm>
 
+#define UP_VECTOR Vec3{0.0f, 1.0f, 0.0f}
+
 struct Vec3 {
 	float x, y, z;
 	Vec3() : x(0), y(0), z(0) {}
 	Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 
+	Vec3 normalized() const;
+
 	Vec3 operator+(const Vec3& rhs) const;
+	void operator+=(const Vec3& rhs);
+	void operator-=(const Vec3& rhs);
 	Vec3 operator-(const Vec3& rhs) const;
 	Vec3 operator/(float value) const;
+	Vec3 operator*(float value) const;
 };
 
 struct Vec4 {

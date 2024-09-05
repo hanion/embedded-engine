@@ -23,6 +23,9 @@ public:
 
 	void zoom(float fov);
 
+	Vec3 forward();
+	Vec3 right();
+
 public:
 	Transform transform = {
 		.x = 0, .y = 0, .z = -15,
