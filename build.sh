@@ -19,7 +19,7 @@ build_stm() {
   cd ./build_stm
 
   run_cmake_configure() {
-    cmake -DTARGET_PLATFORM=stm -DCMAKE_TOOLCHAIN_FILE=../src/platform/stm/cubeide-gcc.cmake -DCMAKE_BUILD_TYPE=Release -S ../src/platform/stm -B .
+    cmake -DCMAKE_BUILD_TYPE=Release -S ../src/platform/stm -B .
   }
   run_cmake_build() {
     cmake --build . --config Release -- -j$(nproc)
@@ -49,7 +49,7 @@ build_sim() {
   cd ./build_sim
 
   run_cmake_configure() {
-    cmake -DTARGET_PLATFORM=sim -DCMAKE_BUILD_TYPE=Release -S ../src/platform/sim -B .
+    cmake -DCMAKE_BUILD_TYPE=Release -S ../src/platform/sim -B .
   }
   run_cmake_build() {
     cmake --build . --config Release -- -j$(nproc)
@@ -70,21 +70,6 @@ build_sim() {
 }
 
 
-
-if [ "$1" == "sim" ]; then
-  build_sim;
-  exit 0;
-fi
-
-if [ "$1" == "stm" ]; then
-  build_stm;
-  ./flash.sh > /dev/null 2>&1 || {
-    ./flash.sh || exit 1
-  }
-  exit 0;
-fi
-
-
 build_and_flash_stm() {
 	build_stm;
 	./flash.sh > /dev/null 2>&1 || {
@@ -96,6 +81,19 @@ build_and_run_sim() {
 	build_sim;
 	./build_sim/ee-sim
 }
+
+
+
+if [ "$1" == "sim" ]; then
+  build_and_run_sim;
+  exit 0;
+fi
+
+if [ "$1" == "stm" ]; then
+  build_and_flash_stm;
+  exit 0;
+fi
+
 
 # default:
 build_and_run_sim;
