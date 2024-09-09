@@ -42,8 +42,8 @@ public:
 
 	static void draw_number(int num, int x, int y, bool bold = false);
 	static void draw_text(const char *text, int x, int y, bool bold = false);
-	static const int calculate_text_width(const char* text, bool bold = false);
-	static const int calculate_number_width(int number, bool bold = false);
+	static int calculate_text_width(const char* text, bool bold = false);
+	static int calculate_number_width(int number, bool bold = false);
 
 	static void draw_mesh(const Mesh& mesh, const Transform& transform, const Camera& camera);
 	inline static Vec3 calculate_face_normal(const Vec3& v0, const Vec3& v1, const Vec3& v2);

@@ -44,6 +44,16 @@ struct vi2 {
 
 	vi2() : x(0), y(0) {}
 	vi2(int x, int y) : x(x), y(y) {}
+
+	vi2 operator+(const vi2& other) const {
+		return { x+other.x, y+other.y };
+	}
+	vi2 operator-(const vi2& other) const {
+		return { x-other.x, y-other.y };
+	}
+	vi2 operator+(const int other) const {
+		return { x+other, y+other};
+	}
 };
 struct vf2 {
 	float x, y;

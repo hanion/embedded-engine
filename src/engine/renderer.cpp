@@ -282,7 +282,7 @@ void Renderer::draw_text(const char *text, int x, int y, bool bold) {
 	}
 }
 
-const int Renderer::calculate_text_width(const char* text, bool bold) {
+ int Renderer::calculate_text_width(const char* text, bool bold) {
 	int width = 0;
 	uint8_t char_width = bold ? FONT_WIDTH * 2 : FONT_WIDTH;
 
@@ -294,7 +294,7 @@ const int Renderer::calculate_text_width(const char* text, bool bold) {
 	return width > 0 ? width - 1 : 0;
 }
 
-const int Renderer::calculate_number_width(int number, bool bold) {
+ int Renderer::calculate_number_width(int number, bool bold) {
 	uint8_t digit_width = FONT_WIDTH;
 	int width = 0;
 
