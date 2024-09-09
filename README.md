@@ -110,31 +110,28 @@ Remove `CreateApplication()` from `src/app/showcase_demos.cpp` if you’re repla
 ## Renderer Features
 
 In the on_update method, you can use the `Renderer` to draw various shapes, text, and meshes. Here are some useful functions:
+```cpp
 
-**Clear the buffer**:
+// Clear the buffer:
+Renderer::clear_back_buffer();
 
-`Renderer::clear_back_buffer();`
+// Set a pixel:
+Renderer::set_pixel(int x, int y, const Color& color);
 
-**Set a pixel**:
+// Draw a line:
+Renderer::draw_line(int x0, int y0, int x1, int y1, Color color);
 
-`Renderer::set_pixel(int x, int y, const Color& color);`
+// Draw a rectangle:
+Renderer::draw_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, Color color);
 
-**Draw a line**:
+// Draw a number:
+Renderer::draw_number(int num, int x, int y);
 
-`Renderer::draw_line(int x0, int y0, int x1, int y1, Color color);`
+// Draw text:
+Renderer::draw_text(const char *text, int x, int y);
 
-**Draw a rectangle**:
+// Draw a mesh (3D rendering):
+Renderer::draw_mesh(const Mesh& mesh, const Transform& transform, const Camera& camera);
 
-`Renderer::draw_rect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, Color color);`
+```
 
-**Draw a number**:
-
-`Renderer::draw_number(int num, int x, int y);`
-
-**Draw text**:
-
-`Renderer::draw_text(const char *text, int x, int y);`
-
-**Draw a mesh (3D rendering)**:
-
-`Renderer::draw_mesh(const Mesh& mesh, const Transform& transform, const Camera& camera);`
