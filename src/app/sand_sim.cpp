@@ -104,10 +104,10 @@ bool SandSim::copy(uint8_t row, uint8_t col) {
 
 void SandSim::advance_rule() {
 	for (uint8_t row = 0; row < HEIGHT; ++row) {
-		for (uint8_t col = 0; col < WIDTH; ++col) {
-			Block block = get(row,col);
-			if (block == Block::EMPTY) {
-				continue;
+		for (uint8_t c = 0; c < WIDTH; ++c) {
+			int8_t col = c;
+			if (row%2) {
+				col = WIDTH - c - 1;
 			}
 
 			int8_t dir = 1;
@@ -119,7 +119,7 @@ void SandSim::advance_rule() {
 			uint8_t right = col+dir;
 			uint8_t left  = col-dir;
 
-			switch (block) {
+			switch (get(row,col)) {
 				case Block::STONE:
 					copy(row, col);
 					break;
@@ -191,6 +191,11 @@ void SandSim::spawn_circle_at_cursor() {
 
 void SandSim::on_event(Event event) {
 	if (event.type == Event::Type::Released) {
+		switch (event.keycode) {
+			case 'i':
+				m_cursor.speed = 0.8f;
+				break;
+		}
 		return;
 	} else if (event.type == Event::Type::Pressed) {
 		switch (event.keycode) {
@@ -223,6 +228,9 @@ void SandSim::on_event(Event event) {
 			case 'o':
 				RANDOMNESS = 1 - RANDOMNESS;
 				break;
+			case 'i':
+				m_cursor.speed = 0.1f;
+				break;
 		}
 	}
 
@@ -231,15 +239,19 @@ void SandSim::on_event(Event event) {
 		case ' ':
 			spawn_circle_at_cursor();
 			break;
+		case 'k':
 		case 'w':
 			m_cursor.move_up();
 			break;
+		case 'j':
 		case 's':
 			m_cursor.move_down();
 			break;
+		case 'h':
 		case 'a':
 			m_cursor.move_left();
 			break;
+		case 'l':
 		case 'd':
 			m_cursor.move_right();
 			break;
