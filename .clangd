@@ -1,5 +1,5 @@
 CompileFlags:
-  CompilationDatabase: "build_stm"
+  CompilationDatabase: "build_sim"
   Add: [
     -Wno-unused-include,
     -I/usr/include, 
