@@ -265,6 +265,8 @@ void Doom::on_update(double delta_time) {
 		}
 	}
 
+	update_enemies(delta_time);
+
 	// sort enemy sprites
 	std::sort(m_enemies.begin(), m_enemies.end(),
 		[this](const Enemy& a, const Enemy& b) {
@@ -273,8 +275,6 @@ void Doom::on_update(double delta_time) {
 			return dist_a > dist_b;
 		}
 	);
-
-	update_enemies(delta_time);
 
 	// draw enemies
 	for (auto& enemy : m_enemies) {

@@ -86,14 +86,11 @@ void Platform::render_row() {
 		for (int8_t block = 1; block >= 0; --block) {
 			for (uint8_t window = 0; window < 4; ++window) {
 				uint8_t x = segment*4 + window;
-				if (TEARING_FIX) {
-					x -= block;
-				}
+				if (TEARING_FIX) { x -= block; }
 				uint8_t y = current_row + block*8;
-				Color data_area_1;
-				data_area_1.value = (*Renderer::front_buffer)[x][y];
-				Color data_area_2;
-				data_area_2.value = (*Renderer::front_buffer)[x][y + 16];
+
+				Color data_area_1((*Renderer::front_buffer)[x][y]);
+				Color data_area_2((*Renderer::front_buffer)[x][y + 16]);
 
 				if(TEARING_FIX) {
 					if (x >= WIDTH) {

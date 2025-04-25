@@ -40,7 +40,7 @@ void Renderer::set_pixel(int x, int y, const Color& color) {
 // Bresenham's line algorithm
 // (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
 void Renderer::draw_line(int x0, int y0, int x1, int y1) {
-	draw_line(x0, y0, x1, y1, {1});
+	draw_line(x0, y0, x1, y1, {0b111});
 }
 void Renderer::draw_line(int x0, int y0, int x1, int y1, Color color) {
 	if ((x0 < 0 && x1 < 0) || (x0 > WIDTH && x1 > WIDTH) ||
@@ -196,9 +196,9 @@ void draw_digit(uint8_t num, int x, int y, bool bold) {
 		for (uint8_t row = 0; row < FONT_HEIGHT; ++row) {
 			if (col_bitmap & (1 << row)) {
 				if (bold) {
-					set_pixel_w_bold(x + 2 * col, y + 2 * row, 1);
+					set_pixel_w_bold(x + 2 * col, y + 2 * row, 0b111);
 				} else {
-					Renderer::set_pixel(x + col, y + row, 1);
+					Renderer::set_pixel(x + col, y + row, 0b111);
 				}
 			}
 		}
@@ -266,9 +266,9 @@ void draw_char(char c, int x, int y, bool bold) {
 		for (uint8_t row = 0; row < FONT_HEIGHT; ++row) {
 			if (col_bitmap & (1 << row)) {
 				if (bold) {
-					set_pixel_w_bold(x + 2 * col, y + 2 * row, 1);
+					set_pixel_w_bold(x + 2 * col, y + 2 * row, 0b111);
 				} else {
-					Renderer::set_pixel(x + col, y + row, 1);
+					Renderer::set_pixel(x + col, y + row, 0b111);
 				}
 			}
 		}
@@ -321,7 +321,7 @@ void Renderer::draw_mesh(const Mesh& mesh, const Transform& transform, const Cam
 	std::vector<Vec4> transformed_vertices(mesh.vertices.size());
 	std::vector<bool> vertex_valid(mesh.vertices.size(), true);
 
-	for (int i = 0; i < mesh.vertices.size(); ++i) {
+	for (size_t i = 0; i < mesh.vertices.size(); ++i) {
 		Vec4 model_space = { mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z, 1.0f };
 
 		transformed_vertices[i] = Math::mat4_mul_vec4_project(&transform_proj_matrix, &model_space);
@@ -344,27 +344,18 @@ void Renderer::draw_mesh(const Mesh& mesh, const Transform& transform, const Cam
 			continue;
 		}
 
-		Vec4 v0 = transformed_vertices[face.indices[0]];
-		Vec4 v1 = transformed_vertices[face.indices[1]];
-		Vec4 v2 = transformed_vertices[face.indices[2]];
-		Vec4 v3 = transformed_vertices[face.indices[3]];
-
+		// backface culling
+		Vec4& v0 = transformed_vertices[face.indices[0]];
+		Vec4& v1 = transformed_vertices[face.indices[1]];
+		Vec4& v2 = transformed_vertices[face.indices[2]];
+		Vec4& v3 = transformed_vertices[face.indices[3]];
 		Vec4 face_centroid = (v0 + v1 + v2 + v3) / 4.0f;
 		Vec3 view_dir = { -face_centroid.x, -face_centroid.y, -face_centroid.z };
-
 		Vec3 face_normal = calculate_face_normal(v0.vec3(),v1.vec3(),v2.vec3());
-		//Vec3 face_normal = calculate_face_normal(v0.vec3(),v1.vec3(),v2.vec3(),v3.vec3());
-
 		float dot_product = Math::dot(view_dir, face_normal);
-
-		// backface culling
 		if (dot_product > 0) {
 			continue;
 		}
-
-		// NOTE: too slow
-		// fill_face(transformed_vertices, face.indices, face.color);
-		// continue;
 
 		for (size_t i = 0; i < 4; ++i) {
 			const Index& current = face.indices[i];

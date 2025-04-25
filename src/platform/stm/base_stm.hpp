@@ -1,5 +1,6 @@
 
 #include "stm32f1xx_hal.h"
+#include "stm32f1xx_hal_gpio.h"
 
 #define RESET_1_Pin GPIO_PIN_13
 #define RESET_1_GPIO_Port GPIOC

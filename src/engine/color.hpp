@@ -6,9 +6,8 @@ namespace EE {
 struct Color {
 	uint8_t value;
 
-	Color (uint8_t rgb = 0) {
-		set(rgb,rgb,rgb);
-	}
+	Color(uint8_t value = 0) : value(value) {}
+
 	Color(uint8_t r, uint8_t g, uint8_t b) {
 		set(r,g,b);
 	}

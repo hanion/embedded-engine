@@ -12,7 +12,7 @@ bool TEARING_FIX = false;
 #define GAP_RATIO 0.0f
 
 static const int fps = 40;
-static int pixel_size = 25;
+static int pixel_size = 20;
 static int screen_width = WIDTH * pixel_size;
 static int screen_height = HEIGHT * pixel_size;
 static int led_gap = pixel_size * GAP_RATIO;

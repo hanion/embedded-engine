@@ -1,4 +1,7 @@
 #include "application.hpp"
+#include "sand_sim.hpp"
+#include "tetris.hpp"
+#include <cstdio>
 using namespace EE;
 #include "cube.hpp"
 #include "dino.hpp"
@@ -24,6 +27,8 @@ private:
 	GameOfLife game_of_life;
 	DisplayString display_string;
 	Doom doom;
+	SandSim sand_sim;
+	Tetris tetris;
 	Application* m_active_app = &doom;
 };
 

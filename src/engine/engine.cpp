@@ -2,6 +2,10 @@
 #include "event.hpp"
 #include "platform.hpp"
 #include "renderer.hpp"
+#include <iostream>
+#include <thread>
+
+#define DEBUG_PRINT_FRAME 0
 
 namespace EE {
 
@@ -19,8 +23,7 @@ void Engine::run() {
 
 		accumulator += delta;
 		if (accumulator >= m_update_interval_ms) {
-			m_DeltaTime = m_update_interval_ms / 1000.0;
-			accumulator -= m_update_interval_ms;
+			//m_DeltaTime = m_update_interval_ms / 1000.0;
 
 			Platform::poll_events(this);
 			EventManager::enqueue_active_events();
@@ -30,7 +33,16 @@ void Engine::run() {
 				m_application.on_update(m_DeltaTime);
 				Renderer::is_back_buffer_new = true;
 				Platform::on_render();
+				m_frame++;
 			}
+#if DEBUG_PRINT_FRAME
+			printf("frame %zu: acc=%f\n", m_frame, accumulator);
+			std::cout << std::flush;
+#endif
+			accumulator = 0;
+		} else {
+			uint32_t time_until_next_frame = std::floor((m_update_interval_ms - accumulator)/2.0);
+			std::this_thread::sleep_for(std::chrono::milliseconds(time_until_next_frame));
 		}
 	}
 }
